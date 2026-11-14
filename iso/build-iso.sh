@@ -29,7 +29,7 @@ lb config \
     --iso-application "Vitrum" \
     --iso-volume "VITRUM_LIVE" \
     --iso-publisher "Vitrum" \
-    --bootappend-live "boot=live components quiet splash loglevel=3 vt.global_cursor_default=0 hostname=vitrum username=user user-fullname=User locales=en_US.UTF-8 keyboard-layouts=us live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,input,render,sudo"
+    --bootappend-live "boot=live components quiet splash loglevel=3 vt.global_cursor_default=0 hostname=vitrum username=user live-config.noautologin user-fullname=User locales=en_US.UTF-8 keyboard-layouts=us live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,input,render,sudo"
 
 # Packages for the live system
 mkdir -p config/package-lists

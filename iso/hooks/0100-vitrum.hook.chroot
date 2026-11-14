@@ -8,7 +8,7 @@ if ! getent passwd user >/dev/null; then
     useradd --create-home --shell /bin/bash --comment "User" user
 fi
 echo "user:live" | chpasswd
-for g in audio video render input plugdev netdev cdrom sudo; do
+for g in audio video render input plugdev netdev cdrom sudo dialout; do
     getent group "$g" >/dev/null && usermod -aG "$g" user
 done
 echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/live-user

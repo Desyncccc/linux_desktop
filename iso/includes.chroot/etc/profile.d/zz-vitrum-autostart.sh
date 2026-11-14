@@ -1,18 +1,24 @@
 # Live session: start Vitrum on the first console after autologin.
 if [ "$(tty)" = "/dev/tty1" ] && [ -z "$WAYLAND_DISPLAY" ] && [ -z "$DISPLAY" ] && [ "$(id -u)" -ne 0 ]; then
     clear
+    log="${XDG_RUNTIME_DIR:-/tmp}/vitrum-session.log"
+    serial=""
+    grep -qw vitrum.serial-log /proc/cmdline 2>/dev/null && [ -w /dev/ttyS0 ] && serial=/dev/ttyS0
     while :; do
+        start=$(date +%s)
         vitrum-session
         rc=$?
-        # 0 means the user signed out: start a fresh session.
-        [ "$rc" -eq 0 ] && continue
-        log="${XDG_RUNTIME_DIR:-/tmp}/vitrum-session.log"
+        if [ -n "$serial" ]; then
+            { echo "=== vitrum-session exited with $rc ==="; cat "$log"; echo "=== end of log ==="; } > "$serial" 2>/dev/null
+        fi
+        # A normal sign-out after a real session: start a fresh one.
+        [ "$rc" -eq 0 ] && [ $(( $(date +%s) - start )) -gt 20 ] && continue
         echo
         echo "Vitrum could not start (exit code $rc). Last lines of $log:"
         echo
-        tail -n 25 "$log" 2>/dev/null
+        tail -n 30 "$log" 2>/dev/null
         echo
-        echo "Type 'vitrum-session' to try again. Switch to another console with Ctrl+Alt+F2."
+        echo "Type 'vitrum-session' to try again."
         break
     done
 fi

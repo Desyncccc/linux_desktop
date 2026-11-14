@@ -31,6 +31,16 @@ jobs:
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVITRUM_BUILD_TESTS=OFF
           cmake --build build
           cd build && cpack -G DEB
+      - name: Smoke test the Debian 13 build (scripted UI tour, fails on any QML warning)
+        run: |
+          apt-get install -y --no-install-recommends ./build/vitrum_*.deb xvfb xauth libgl1-mesa-dri fonts-noto-core
+          export XDG_RUNTIME_DIR=$(mktemp -d) && chmod 700 "$XDG_RUNTIME_DIR"
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1366x768x24 &
+          sleep 2
+          DISPLAY=:99 QT_QPA_PLATFORM=xcb VITRUM_NO_DBUS=1 VITRUM_NO_AUTOSTART=1 \
+            timeout 180 vitrum --demo "$PWD/screenshots" --strict
+          test "$(ls screenshots/*.png | wc -l)" -ge 15
       - uses: actions/upload-artifact@v4
         with:
           name: vitrum-deb-debian-13
@@ -64,3 +74,32 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: out/*.iso
+
+  boot-test:
+    name: Boot ISO in QEMU (${{ matrix.vga }} graphics)
+    needs: iso
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        vga: [vmware, virtio]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: vitrum-live-iso
+          path: iso-out
+      - name: Install QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils socat libarchive-tools imagemagick
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm || true
+          ls -l /dev/kvm || true
+      - name: Boot and capture
+        run: bash iso/boot-test.sh iso-out/*.iso ${{ matrix.vga }} boot-shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: boot-test-${{ matrix.vga }}
+          path: boot-shots

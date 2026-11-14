@@ -50,16 +50,24 @@ if [ -z "$QT_QPA_EGLFS_KMS_CONFIG" ]; then
 fi
 log="${XDG_RUNTIME_DIR:-/tmp}/vitrum-session.log"
 
+echo "== $(date) starting Vitrum on DRM/KMS" >"$log"
 start=$(date +%s)
-run vitrum "$@" >"$log" 2>&1
+run vitrum "$@" >>"$log" 2>&1
 rc=$?
 elapsed=$(( $(date +%s) - start ))
+echo "== vitrum exited with $rc after ${elapsed}s" >>"$log"
 
 # Exit 0 is a normal sign-out. A quick failure means KMS didn't work.
 if [ "$rc" -ne 0 ] && [ "$elapsed" -lt 15 ] && command -v xinit >/dev/null 2>&1; then
-    unset QT_QPA_PLATFORM QT_QPA_EGLFS_INTEGRATION QT_QPA_EGLFS_ALWAYS_SET_MODE
+    echo "== falling back to an X server" >>"$log"
+    unset QT_QPA_EGLFS_INTEGRATION QT_QPA_EGLFS_ALWAYS_SET_MODE QT_QPA_EGLFS_KMS_CONFIG
     export QT_QPA_PLATFORM=xcb
+    status="$XDG_RUNTIME_DIR/vitrum-x-status"
+    rm -f "$status"
     vt="vt${XDG_VTNR:-1}"
-    exec xinit "$(command -v vitrum)" -- :0 "$vt" -nolisten tcp -keeptty >>"$log" 2>&1
+    # xinit doesn't pass on the client's exit code; record it ourselves.
+    xinit /bin/sh -c "vitrum $*; echo \$? > '$status'" -- :0 "$vt" -nolisten tcp -keeptty >>"$log" 2>&1
+    rc=$(cat "$status" 2>/dev/null || echo 1)
+    echo "== vitrum (X) exited with $rc" >>"$log"
 fi
 exit "$rc"
