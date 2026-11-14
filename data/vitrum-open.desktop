@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Windows Program Launcher
+Comment=Run Windows programs and Java archives
+Exec=vitrum-open %f
+Icon=vitrum
+NoDisplay=true
+Terminal=false
+MimeType=application/x-ms-dos-executable;application/x-msdos-program;application/x-msdownload;application/vnd.microsoft.portable-executable;application/x-ms-shortcut;application/x-msi;application/x-ole-storage;application/x-bat;text/x-ms-regedit;application/x-java-archive;application/java-archive;
