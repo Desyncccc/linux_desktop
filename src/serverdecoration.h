@@ -44,5 +44,6 @@ protected:
 private:
     ServerDecorations();
     QSet<QWaylandSurface *> m_server;
+    QSet<QWaylandSurface *> m_watched;
     int m_revision = 0;
 };

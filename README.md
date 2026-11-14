@@ -127,7 +127,7 @@ This is an early release. Known gaps:
   and need XWayland; command‑line `.jar` files work.
 * Applications that insist on drawing their own title bar (GTK 4 apps with
   header bars, some Electron apps) keep it; everything that supports server‑side
-  decorations (Qt, GTK 3, Firefox, foot, …) gets the Vitrum frame.
+  decorations (Qt, GTK 3, Firefox, …) gets the Vitrum frame.
 * Single monitor; no display‑settings UI for resolution yet.
 * No system‑tray (StatusNotifierItem) icons from third‑party apps yet.
 

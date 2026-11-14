@@ -109,7 +109,7 @@ set(CPACK_DEBIAN_PACKAGE_DEPENDS "qml6-module-qtquick, qml6-module-qtquick-contr
 if(VITRUM_DEB_EXTRA_DEPENDS)
     string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", ${VITRUM_DEB_EXTRA_DEPENDS}")
 endif()
-set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "foot | x-terminal-emulator, wireplumber, network-manager, wine, icoutils, xinit, xserver-xorg-core, dbus-user-session")
+set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "qterminal | x-terminal-emulator, wireplumber, network-manager, wine, icoutils, xinit, xserver-xorg-core, dbus-user-session")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS "default-jre")
 set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_DEBIAN_PACKAGE_SECTION x11)

@@ -61,7 +61,8 @@ qt6-wayland
 xserver-xorg-core
 xserver-xorg-input-libinput
 xinit
-foot
+qterminal
+fonts-dejavu-core
 firefox-esr
 xdg-utils
 icoutils

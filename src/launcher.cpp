@@ -78,12 +78,14 @@ QProcessEnvironment Launcher::clientEnvironment() const
 
 QString Launcher::terminal() const
 {
+    // Terminals built on Qt or GTK 3 work with our compositor; foot and kitty
+    // need newer wl_seat / wl_data_device_manager versions than Qt provides.
     static const QStringList candidates = {
-        QStringLiteral("x-terminal-emulator"), QStringLiteral("foot"), QStringLiteral("kitty"),
-        QStringLiteral("alacritty"), QStringLiteral("wezterm"), QStringLiteral("konsole"),
-        QStringLiteral("gnome-terminal"), QStringLiteral("kgx"), QStringLiteral("xfce4-terminal"),
-        QStringLiteral("qterminal"), QStringLiteral("lxterminal"), QStringLiteral("weston-terminal"),
-        QStringLiteral("xterm"),
+        QStringLiteral("qterminal"), QStringLiteral("konsole"), QStringLiteral("xfce4-terminal"),
+        QStringLiteral("lxterminal"), QStringLiteral("gnome-terminal"), QStringLiteral("mate-terminal"),
+        QStringLiteral("terminator"), QStringLiteral("alacritty"), QStringLiteral("wezterm"),
+        QStringLiteral("kgx"), QStringLiteral("x-terminal-emulator"), QStringLiteral("foot"),
+        QStringLiteral("kitty"), QStringLiteral("weston-terminal"), QStringLiteral("xterm"),
     };
     const QString pref = qEnvironmentVariable("TERMINAL");
     if (!pref.isEmpty() && commandExists(pref))
