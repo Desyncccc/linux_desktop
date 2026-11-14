@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Vitrum
+Comment=Glass-styled desktop with a familiar taskbar and Start menu
+Exec=vitrum-session
+TryExec=vitrum
+Type=Application
+DesktopNames=Vitrum

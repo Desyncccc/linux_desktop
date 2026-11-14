@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c98f"/><stop offset="1" stop-color="#b98a44"/></linearGradient>
+  <radialGradient id="d" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#bfe6ff"/><stop offset="1" stop-color="#8fa3c8"/></radialGradient></defs>
+  <path d="M6 18 l18 -9 l18 9 v18 l-18 9 l-18 -9 z" fill="url(#b)" stroke="#7a5622"/>
+  <path d="M6 18 l18 9 l18 -9 M24 27 v18" fill="none" stroke="#7a5622"/>
+  <circle cx="33" cy="15" r="9" fill="url(#d)" stroke="#5f6f8f"/><circle cx="33" cy="15" r="2.2" fill="#fff" stroke="#5f6f8f"/>
+</svg>

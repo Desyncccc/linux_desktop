@@ -1,0 +1,3 @@
+# PAM configuration for the Vitrum lock screen.
+@include common-auth
+@include common-account

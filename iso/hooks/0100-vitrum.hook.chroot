@@ -1,0 +1,39 @@
+#!/bin/sh
+# Runs inside the live image while it is built.
+set -e
+
+# 32-bit Windows programs need the 32-bit runtime.
+dpkg --add-architecture i386
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wine32:i386 || true
+
+# Rename the terminal to something familiar.
+if [ -f /usr/share/applications/foot.desktop ]; then
+    sed -i 's/^Name=.*/Name=Command Prompt/; s/^GenericName=.*/GenericName=Command line/' /usr/share/applications/foot.desktop
+fi
+# Hide extra terminal variants and server entries from the Start menu.
+for f in footclient.desktop foot-server.desktop; do
+    [ -f /usr/share/applications/$f ] && echo "NoDisplay=true" >> /usr/share/applications/$f
+done
+
+# Firefox: use the system (Vitrum) title bar instead of drawing its own.
+mkdir -p /usr/lib/firefox-esr/defaults/pref
+cat > /usr/lib/firefox-esr/defaults/pref/vitrum.js <<'PREF'
+pref("browser.tabs.inTitlebar", 0);
+pref("widget.use-xdg-desktop-portal.file-picker", 0);
+PREF
+
+# Default taskbar pins for new users.
+mkdir -p /etc/skel/.config/Vitrum
+cat > /etc/skel/.config/Vitrum/vitrum.conf <<'CONF'
+[taskbar]
+pinned=firefox-esr.desktop, foot.desktop
+
+[start]
+pinned=firefox-esr.desktop, foot.desktop
+
+[general]
+firstRunDone=true
+CONF
+
+systemctl set-default multi-user.target

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build, test and smoke test (Ubuntu 24.04)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ pkg-config libpam0g-dev libwayland-dev libwayland-bin \
+            qt6-base-dev qt6-declarative-dev qt6-wayland-dev qt6-wayland qt6-shadertools-dev qt6-svg-dev \
+            qt6-tools-dev-tools qt6-declarative-dev-tools \
+            qml6-module-qtwayland-compositor qml6-module-qtquick qml6-module-qtquick-controls \
+            qml6-module-qtquick-layouts qml6-module-qtquick-window qml6-module-qtquick-templates \
+            qml6-module-qtqml-workerscript qml6-module-qt5compat-graphicaleffects \
+            qml6-module-qt-labs-folderlistmodel qml6-module-qtqml-models qml6-module-qtqml \
+            libgl1-mesa-dri xvfb fonts-noto-core adwaita-icon-theme hicolor-icon-theme
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/usr
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Unit tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Smoke test (scripted UI tour, fails on any QML warning)
+        run: |
+          export XDG_RUNTIME_DIR=$(mktemp -d) && chmod 700 "$XDG_RUNTIME_DIR"
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1366x768x24 &
+          sleep 2
+          DISPLAY=:99 QT_QPA_PLATFORM=xcb VITRUM_NO_DBUS=1 VITRUM_NO_AUTOSTART=1 \
+            timeout 180 ./build/vitrum --demo "$PWD/screenshots" --strict \
+              --demo-client /usr/lib/qt6/bin/designer
+          ls -l screenshots
+          test "$(ls screenshots/*.png | wc -l)" -ge 15
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/*.png
+          if-no-files-found: ignore
+
+      - name: Package (.deb)
+        run: cd build && cpack -G DEB
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitrum-deb-ubuntu-24.04
+          path: build/*.deb

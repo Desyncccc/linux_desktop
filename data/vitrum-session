@@ -1,0 +1,51 @@
+#!/bin/sh
+# Start a Vitrum desktop session.
+#
+# From a display manager this runs on its own VT; from a text console (e.g.
+# autologin on tty1) it drives the display directly through DRM/KMS. If KMS
+# isn't usable (some virtual GPUs) it falls back to a bare X server.
+
+export XDG_CURRENT_DESKTOP=Vitrum
+export XDG_SESSION_DESKTOP=vitrum
+export XDG_SESSION_TYPE=wayland
+export DESKTOP_SESSION=vitrum
+
+# Keyboard layout from the system configuration.
+if [ -z "$XKB_DEFAULT_LAYOUT" ] && [ -r /etc/default/keyboard ]; then
+    . /etc/default/keyboard
+    [ -n "$XKBLAYOUT" ] && export XKB_DEFAULT_LAYOUT="$XKBLAYOUT"
+    [ -n "$XKBVARIANT" ] && export XKB_DEFAULT_VARIANT="$XKBVARIANT"
+    [ -n "$XKBOPTIONS" ] && export XKB_DEFAULT_OPTIONS="$XKBOPTIONS"
+fi
+
+# Already inside a graphical session: run nested (full screen).
+if [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; then
+    exec vitrum "$@"
+fi
+
+run() {
+    if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && command -v dbus-run-session >/dev/null 2>&1; then
+        dbus-run-session -- "$@"
+    else
+        "$@"
+    fi
+}
+
+export QT_QPA_PLATFORM=eglfs
+export QT_QPA_EGLFS_INTEGRATION=eglfs_kms
+export QT_QPA_EGLFS_ALWAYS_SET_MODE=1
+log="${XDG_RUNTIME_DIR:-/tmp}/vitrum-session.log"
+
+start=$(date +%s)
+run vitrum "$@" >"$log" 2>&1
+rc=$?
+elapsed=$(( $(date +%s) - start ))
+
+# Exit 0 is a normal sign-out. A quick failure means KMS didn't work.
+if [ "$rc" -ne 0 ] && [ "$elapsed" -lt 15 ] && command -v xinit >/dev/null 2>&1; then
+    unset QT_QPA_PLATFORM QT_QPA_EGLFS_INTEGRATION QT_QPA_EGLFS_ALWAYS_SET_MODE
+    export QT_QPA_PLATFORM=xcb
+    vt="vt${XDG_VTNR:-1}"
+    exec xinit "$(command -v vitrum)" -- :0 "$vt" -nolisten tcp -keeptty >>"$log" 2>&1
+fi
+exit "$rc"

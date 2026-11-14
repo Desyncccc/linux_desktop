@@ -1,0 +1,11 @@
+[Default Applications]
+application/x-ms-dos-executable=vitrum-open.desktop
+application/x-msdos-program=vitrum-open.desktop
+application/x-msdownload=vitrum-open.desktop
+application/vnd.microsoft.portable-executable=vitrum-open.desktop
+application/x-ms-shortcut=vitrum-open.desktop
+application/x-msi=vitrum-open.desktop
+application/x-bat=vitrum-open.desktop
+text/x-ms-regedit=vitrum-open.desktop
+application/x-java-archive=vitrum-open.desktop
+application/java-archive=vitrum-open.desktop

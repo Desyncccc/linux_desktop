@@ -1,0 +1,42 @@
+#!/bin/sh
+# Open a Windows program (.exe .msi .bat .cmd .lnk .reg .vbs) or Java archive
+# (.jar) the way the Vitrum shell does: quietly, through a private runtime
+# prefix, with none of the runtime's own menus or prompts. Registered as the
+# handler for those file types so other applications open them the same way.
+[ $# -ge 1 ] || { echo "usage: vitrum-open FILE [ARGS...]" >&2; exit 2; }
+file=$1
+shift
+
+export WINEPREFIX="${VITRUM_WINDOWS_PREFIX:-${XDG_DATA_HOME:-$HOME/.local/share}/vitrum/windows}"
+export WINEDEBUG=-all
+export WINEDLLOVERRIDES="winemenubuilder.exe=d;mscoree=d;mshtml=d"
+
+notify() {
+    command -v gdbus >/dev/null 2>&1 && gdbus call --session --dest org.freedesktop.Notifications \
+        --object-path /org/freedesktop/Notifications --method org.freedesktop.Notifications.Notify \
+        "Vitrum" 0 "dialog-information" "$1" "$2" "[]" "{}" 6000 >/dev/null 2>&1
+}
+
+wine=$(command -v wine || command -v wine64)
+lower=$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')
+dir=$(dirname -- "$file")
+cd "$dir" 2>/dev/null || true
+
+case "$lower" in
+    *.jar)
+        command -v java >/dev/null 2>&1 || { notify "Java runtime needed" "Install it from Settings > Windows app support."; exit 1; }
+        exec java -jar "$file" "$@" ;;
+    *.exe|*.com|*.scr|*.msi|*.msp|*.bat|*.cmd|*.lnk|*.reg|*.vbs|*.wsf)
+        [ -n "$wine" ] || { notify "Windows app support needed" "Install it from Settings > Windows app support."; exit 1; } ;;
+    *)
+        exec xdg-open "$file" ;;
+esac
+
+case "$lower" in
+    *.msi|*.msp) exec "$wine" msiexec /i "$file" "$@" ;;
+    *.bat|*.cmd) exec "$wine" wineconsole cmd /c "$file" "$@" ;;
+    *.lnk)       exec "$wine" start /unix "$file" "$@" ;;
+    *.reg)       exec "$wine" regedit "$file" ;;
+    *.vbs|*.wsf) exec "$wine" wscript "$file" "$@" ;;
+    *)           exec "$wine" "$file" "$@" ;;
+esac
