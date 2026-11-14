@@ -14,6 +14,8 @@ INITRD=$(bsdtar -tf "$ISO" | grep -m1 '^live/initrd')
 echo "Kernel: $KERNEL  initrd: $INITRD"
 bsdtar -xf "$ISO" -C "$WORK" "$KERNEL" "$INITRD"
 APPEND=$(bsdtar -xOf "$ISO" boot/grub/grub.cfg boot/grub/config.cfg 2>/dev/null | sed -n 's/^[[:space:]]*linux[[:space:]]\+[^ ]*vmlinuz[^ ]* \(.*\)$/\1/p' | head -n1)
+# Drop GRUB-only parameters (e.g. findiso=${iso_path}, which GRUB expands).
+APPEND=$(printf '%s\n' "$APPEND" | tr ' ' '\n' | grep -v '\${' | tr '\n' ' ')
 [ -n "${APPEND// /}" ] || APPEND="boot=live components quiet splash"
 APPEND="$APPEND console=tty0 console=ttyS0,115200 vitrum.serial-log systemd.mask=serial-getty@ttyS0.service"
 echo "Kernel command line: $APPEND"
@@ -41,7 +43,7 @@ shot() {
     fi
 }
 
-for t in 45 90 150; do
+for t in 45 90 150 210; do
     sleep $(( t - ${prev:-0} ))
     prev=$t
     shot "t${t}s"
