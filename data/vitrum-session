@@ -42,6 +42,12 @@ run() {
 export QT_QPA_PLATFORM=eglfs
 export QT_QPA_EGLFS_INTEGRATION=eglfs_kms
 export QT_QPA_EGLFS_ALWAYS_SET_MODE=1
+# Draw the pointer ourselves: hardware cursor planes are unreliable on
+# virtual GPUs (VMware SVGA, VirtualBox, QXL), where it can go invisible.
+if [ -z "$QT_QPA_EGLFS_KMS_CONFIG" ]; then
+    printf '{ "hwcursor": false }\n' > "$XDG_RUNTIME_DIR/vitrum-kms.json"
+    export QT_QPA_EGLFS_KMS_CONFIG="$XDG_RUNTIME_DIR/vitrum-kms.json"
+fi
 log="${XDG_RUNTIME_DIR:-/tmp}/vitrum-session.log"
 
 start=$(date +%s)
