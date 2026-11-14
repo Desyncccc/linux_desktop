@@ -154,9 +154,10 @@ QString Compat::open(const QString &path, const QStringList &args)
     p.setWorkingDirectory(QFileInfo(path).absolutePath());
     p.setStandardInputFile(QProcess::nullDevice());
     if (!qEnvironmentVariableIsSet("VITRUM_CLIENT_OUTPUT")) {
-        p.setStandardOutputFile(QProcess::nullDevice());
-        p.setStandardErrorFile(QProcess::nullDevice());
+        p.setStandardOutputFile(Launcher::appLogPath(), QIODevice::Append);
+        p.setStandardErrorFile(Launcher::appLogPath(), QIODevice::Append);
     }
+    Launcher::appendToAppLog(QStringLiteral("== launching: ") + cmd.join(QLatin1Char(' ')));
     if (!p.startDetached())
         return QStringLiteral("failed");
     if (kind == WindowsInstaller || kind == WindowsExe)

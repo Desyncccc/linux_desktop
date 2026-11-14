@@ -18,6 +18,15 @@ if [ -z "$XDG_RUNTIME_DIR" ] || [ ! -d "$XDG_RUNTIME_DIR" ]; then
     export XDG_RUNTIME_DIR
 fi
 
+# Many apps (the foot terminal among them) refuse to run without a UTF-8
+# locale. Use the configured one if it is UTF-8, otherwise C.UTF-8.
+case "${LC_ALL:-${LANG:-}}" in
+    *UTF-8*|*utf8*) ;;
+    *)
+        if locale -a 2>/dev/null | grep -qi '^en_US\.utf8$'; then export LANG=en_US.UTF-8; else export LANG=C.UTF-8; fi
+        unset LC_ALL ;;
+esac
+
 # Keyboard layout from the system configuration.
 if [ -z "$XKB_DEFAULT_LAYOUT" ] && [ -r /etc/default/keyboard ]; then
     . /etc/default/keyboard

@@ -43,11 +43,21 @@ shot() {
     fi
 }
 
-for t in 45 90 150 210; do
-    sleep $(( t - ${prev:-0} ))
-    prev=$t
-    shot "t${t}s"
-done
+key() { echo "sendkey $1" | socat - "UNIX-CONNECT:$WORK/mon.sock" >/dev/null 2>&1; sleep 0.15; }
+type_text() { local t=$1 i; for ((i = 0; i < ${#t}; i++)); do key "${t:i:1}"; done; }
+
+sleep 60
+shot "1-desktop"
+key meta_l; sleep 2
+shot "2-start-menu"
+type_text firefox; sleep 1
+shot "3-search"
+key ret; sleep 40
+shot "4-firefox"
+key ctrl-alt-t; sleep 12
+shot "5-terminal"
+key meta_l-e; sleep 5
+shot "6-explorer"
 
 echo "::group::serial console"
 tr -cd '\11\12\15\40-\176' < "$OUT/serial.log" | tail -n 400

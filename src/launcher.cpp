@@ -3,7 +3,9 @@
 #include "appmodel.h"
 #include "compat.h"
 
+#include <QDateTime>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QProcess>
 #include <QStandardPaths>
@@ -109,15 +111,35 @@ bool Launcher::run(const QStringList &args, const QString &workingDir)
     p.setProcessEnvironment(clientEnvironment());
     p.setWorkingDirectory(workingDir.isEmpty() ? QDir::homePath() : workingDir);
     p.setStandardInputFile(QProcess::nullDevice());
+    // Keep apps' output in a session log so failed launches can be diagnosed.
+    const QString log = appLogPath();
     if (!qEnvironmentVariableIsSet("VITRUM_CLIENT_OUTPUT")) {
-        p.setStandardOutputFile(QProcess::nullDevice());
-        p.setStandardErrorFile(QProcess::nullDevice());
+        p.setStandardOutputFile(log, QIODevice::Append);
+        p.setStandardErrorFile(log, QIODevice::Append);
     }
+    appendToAppLog(QStringLiteral("== launching: ") + args.join(QLatin1Char(' ')));
     qint64 pid = 0;
     const bool ok = p.startDetached(&pid);
-    if (!ok)
+    if (!ok) {
         qWarning("vitrum: failed to start %s", qPrintable(args.join(QLatin1Char(' '))));
+        appendToAppLog(QStringLiteral("== failed to start (program not found or not executable)"));
+    }
     return ok;
+}
+
+QString Launcher::appLogPath()
+{
+    QString dir = qEnvironmentVariable("XDG_RUNTIME_DIR");
+    if (dir.isEmpty())
+        dir = QDir::tempPath();
+    return dir + QStringLiteral("/vitrum-apps.log");
+}
+
+void Launcher::appendToAppLog(const QString &line)
+{
+    QFile f(appLogPath());
+    if (f.open(QIODevice::WriteOnly | QIODevice::Append))
+        f.write((QDateTime::currentDateTime().toString(QStringLiteral("hh:mm:ss ")) + line + QLatin1Char('\n')).toUtf8());
 }
 
 bool Launcher::launchEntry(const DesktopEntry &entry, const QStringList &files)
