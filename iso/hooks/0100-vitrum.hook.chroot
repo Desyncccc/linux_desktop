@@ -35,14 +35,21 @@ pref("browser.tabs.inTitlebar", 0);
 pref("widget.use-xdg-desktop-portal.file-picker", 0);
 PREF
 
-# Default taskbar pins for new users.
+# Default taskbar pins for new users, using the launcher names actually
+# installed (Debian's Firefox launcher name varies between releases).
+pins=""
+for id in firefox-esr.desktop firefox.desktop org.mozilla.firefox.desktop; do
+    if [ -f "/usr/share/applications/$id" ]; then pins="$id"; break; fi
+done
+[ -f /usr/share/applications/foot.desktop ] && pins="${pins:+$pins, }foot.desktop"
+echo "Default pins: $pins"
 mkdir -p /etc/skel/.config/Vitrum
-cat > /etc/skel/.config/Vitrum/vitrum.conf <<'CONF'
+cat > /etc/skel/.config/Vitrum/vitrum.conf <<CONF
 [taskbar]
-pinned=firefox-esr.desktop, foot.desktop
+pinned=$pins
 
 [start]
-pinned=firefox-esr.desktop, foot.desktop
+pinned=$pins
 
 [general]
 firstRunDone=true
