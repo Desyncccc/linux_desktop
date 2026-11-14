@@ -28,7 +28,8 @@ jobs:
             qml6-module-qtwayland-compositor qml6-module-qt5compat-graphicaleffects
       - name: Build
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVITRUM_BUILD_TESTS=OFF
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVITRUM_BUILD_TESTS=OFF \
+            -DVITRUM_DEB_EXTRA_DEPENDS="qt6-svg-plugins, qml6-module-qtwayland-compositor, qt6-qpa-plugins"
           cmake --build build
           cd build && cpack -G DEB
       - name: Smoke test the Debian 13 build (scripted UI tour, fails on any QML warning)

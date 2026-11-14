@@ -7,6 +7,7 @@ include(GNUInstallDirs)
 
 option(VITRUM_BUILD_TESTS "Build unit tests" ON)
 option(VITRUM_WITH_PAM "Use PAM for the lock screen" ON)
+set(VITRUM_DEB_EXTRA_DEPENDS "" CACHE STRING "Extra Debian package dependencies (distribution specific)")
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui DBus Qml Quick QuickControls2 WaylandCompositor ShaderTools Svg)
 qt_standard_project_setup()
@@ -105,6 +106,9 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Glass-styled desktop shell and Wayland co
 set(CPACK_PACKAGING_INSTALL_PREFIX /usr)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "qml6-module-qtquick, qml6-module-qtquick-controls, qml6-module-qtquick-layouts, qml6-module-qtquick-window, qml6-module-qtquick-templates, qml6-module-qtwayland-compositor, qml6-module-qt5compat-graphicaleffects, qml6-module-qt-labs-folderlistmodel, qml6-module-qtqml-workerscript, qt6-qpa-plugins, xdg-utils")
+if(VITRUM_DEB_EXTRA_DEPENDS)
+    string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", ${VITRUM_DEB_EXTRA_DEPENDS}")
+endif()
 set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "foot | x-terminal-emulator, wireplumber, network-manager, wine, icoutils, xinit, xserver-xorg-core, dbus-user-session")
 set(CPACK_DEBIAN_PACKAGE_SUGGESTS "default-jre")
 set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)

@@ -56,6 +56,7 @@ libgl1-mesa-dri
 libegl-mesa0
 libgbm1
 qt6-qpa-plugins
+qt6-svg-plugins
 qt6-wayland
 xserver-xorg-core
 xserver-xorg-input-libinput
