@@ -85,6 +85,7 @@ Item {
     Component { id: notepadApp; NotepadApp {} }
     Component { id: photosApp; PhotoViewerApp {} }
     Component { id: messageApp; MessageDialog {} }
+    Component { id: calculatorApp; CalculatorApp {} }
 
     readonly property var internalSpecs: ({
         settings:    { component: settingsApp, title: "Settings", icon: Theme.icon("settings"), w: 860, h: 580, single: true },
@@ -93,8 +94,9 @@ Item {
         taskmanager: { component: taskManagerApp, title: "Task Manager", icon: Theme.icon("taskmanager"), w: 520, h: 520, single: true },
         about:       { component: aboutApp, title: "About Vitrum", icon: Theme.icon("about"), w: 470, h: 400, single: true, resizable: false },
         properties:  { component: propertiesApp, title: "Properties", icon: Theme.icon("properties"), w: 380, h: 470, resizable: false },
-        notepad:     { component: notepadApp, title: "Untitled - Notepad", icon: "accessories-text-editor", w: 720, h: 500 },
+        notepad:     { component: notepadApp, title: "Untitled - Notepad", icon: Theme.icon("notepad"), w: 720, h: 500 },
         photos:      { component: photosApp, title: "Photo Viewer", icon: Theme.icon("image-file"), w: 820, h: 600 },
+        calculator:  { component: calculatorApp, title: "Calculator", icon: Theme.icon("calculator"), w: 300, h: 380, resizable: false },
         message:     { component: messageApp, title: "Vitrum", icon: Theme.icon("about"), w: 420, h: 170, resizable: false }
     })
 
@@ -252,8 +254,10 @@ Item {
         id: welcome
         interval: 1500
         onTriggered: {
-            if (!Prefs.firstRunDone || Session.env("VITRUM_WELCOME") === "1")
+            if (!Prefs.welcomeShown || Session.env("VITRUM_WELCOME") === "1") {
+                Prefs.welcomeShown = true
                 Shell.notify("Welcome to Vitrum", "Press the Start button or the Windows key to get started.", Theme.icon("vitrum"))
+            }
         }
     }
 

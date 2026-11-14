@@ -50,6 +50,7 @@ Item {
         [100, () => { Shell.switchCommit() }, ""],
         [100, () => { if (settingsWin) settingsWin.restore(); if (settingsWin) settingsWin.internalItem.page = "compat" }, ""],
         [700, () => {}, "windows-app-support"],
+        [100, () => { const c = screen.openInternal("calculator", {}); if (c) { c.x = 900; c.y = 120 } }, ""],
         [100, () => { screen.openInternal("notepad", {}) }, ""],
         [700, () => {}, "notepad"],
         [100, () => { screen.openInternal("message", { kind: "missing-windows", file: Files.downloads + "/setup.exe" }) }, ""],

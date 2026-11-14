@@ -11,7 +11,22 @@ Item {
     height: 540
     property bool open: Shell.startOpen
     property string query: search.text.trim()
-    readonly property var results: query.length > 0 ? Apps.search(query, 14) : []
+    // Built-in programs, listed alongside installed ones.
+    readonly property var builtins: [
+        { name: "Calculator", kind: "calculator", iconName: Theme.icon("calculator"), keys: "calc math" },
+        { name: "Notepad", kind: "notepad", iconName: Theme.icon("notepad"), keys: "text editor notes" },
+        { name: "Explorer", kind: "explorer", iconName: Theme.icon("folder"), keys: "files folders file manager" },
+        { name: "Photo Viewer", kind: "photos", iconName: Theme.icon("image-file"), keys: "pictures images" },
+        { name: "Settings", kind: "settings", iconName: Theme.icon("settings"), keys: "control panel preferences" },
+        { name: "Task Manager", kind: "taskmanager", iconName: Theme.icon("taskmanager"), keys: "processes kill" },
+        { name: "Run", kind: "run", iconName: Theme.icon("run"), keys: "command" }
+    ]
+    readonly property var builtinResults: {
+        const q = query.toLowerCase()
+        if (q.length === 0) return []
+        return builtins.filter(b => b.name.toLowerCase().indexOf(q) >= 0 || b.keys.indexOf(q) >= 0)
+    }
+    readonly property var results: query.length > 0 ? builtinResults.concat(Apps.search(query, 14)) : []
     readonly property var settingsResults: {
         if (query.length < 2)
             return []
@@ -26,7 +41,11 @@ Item {
         const q = query.toLowerCase()
         return pages.filter(p => p.name.toLowerCase().indexOf(q) >= 0 || p.keys.indexOf(q) >= 0)
     }
-    readonly property var pinned: { Prefs.startPinned; return Apps.appsForIds(Prefs.startPinned) }
+    readonly property var pinned: {
+        Prefs.startPinned
+        const apps = Apps.appsForIds(Prefs.startPinned)
+        return apps.length > 0 ? apps : [builtins[1], builtins[0], builtins[2]]
+    }
     readonly property var frequent: {
         Prefs.launchCountsChanged; Apps.count
         const ids = Prefs.frequentApps(10).filter(id => Prefs.startPinned.indexOf(id) < 0)
@@ -51,9 +70,16 @@ Item {
     }
 
     function launch(app) {
-        Shell.launchApp(app.desktopId)
+        if (app.kind) {
+            Shell.closePopups()
+            Shell.openInternal(app.kind, {})
+        } else {
+            Shell.launchApp(app.desktopId)
+        }
     }
     function appMenu(app, gx, gy) {
+        if (app.kind)
+            return
         const entries = [
             { text: "Open", bold: true, action: () => menu.launch(app) },
             { separator: true },
@@ -136,7 +162,7 @@ Item {
             clip: true
             boundsBehavior: Flickable.StopAtBounds
             property var expanded: ({})
-            model: { Apps.count; return menu.open && Shell.startAllPrograms ? Apps.categoryGroups() : [] }
+            model: { Apps.count; return menu.open && Shell.startAllPrograms ? [{ category: "Accessories (built-in)", apps: menu.builtins }].concat(Apps.categoryGroups()) : [] }
             delegate: Column {
                 id: grp
                 required property var modelData

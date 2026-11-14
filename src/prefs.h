@@ -49,6 +49,7 @@ private:
     VITRUM_PREF(bool, showDesktopIcons, setShowDesktopIcons, "desktop/showIcons", true)
     VITRUM_PREF(QString, keyboardLayout, setKeyboardLayout, "input/keyboardLayout", QString())
     VITRUM_PREF(bool, firstRunDone, setFirstRunDone, "general/firstRunDone", false)
+    VITRUM_PREF(bool, welcomeShown, setWelcomeShown, "general/welcomeShown", false)
 
 #undef VITRUM_PREF
 

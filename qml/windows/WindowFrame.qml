@@ -47,6 +47,7 @@ Item {
     property string tile: ""
     property rect restoreRect: Qt.rect(0, 0, 0, 0)   // frame position + content size
     property bool placed: false
+    property bool constructed: false
     readonly property bool maximized: isInternal ? internalMaximized : (toplevel ? toplevel.maximized : false)
     readonly property bool fullscreen: toplevel ? toplevel.fullscreen : false
     readonly property bool active: Shell.activeWindow === win
@@ -92,11 +93,15 @@ Item {
         Translate { y: win.minimizeProgress * Math.max(0, Shell.screenHeight - win.y - win.height * 0.3) }
     ]
 
-    Component.onCompleted: appearAnim.start()
+    Component.onCompleted: {
+        appearAnim.start()
+        constructed = true
+        placeIfNeeded()
+    }
 
     // ---- placement
     function placeIfNeeded() {
-        if (placed || contentWidth <= 0 || contentHeight <= 0)
+        if (!constructed || placed || contentWidth <= 0 || contentHeight <= 0)
             return
         placed = true
         const a = Shell.workArea
