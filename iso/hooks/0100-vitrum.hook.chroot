@@ -2,6 +2,18 @@
 # Runs inside the live image while it is built.
 set -e
 
+# The live user. live-config only creates it when the user-setup package is
+# present; creating it here makes autologin independent of that.
+if ! getent passwd user >/dev/null; then
+    useradd --create-home --shell /bin/bash --comment "User" user
+fi
+echo "user:live" | chpasswd
+for g in audio video render input plugdev netdev cdrom sudo; do
+    getent group "$g" >/dev/null && usermod -aG "$g" user
+done
+echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/live-user
+chmod 0440 /etc/sudoers.d/live-user
+
 # 32-bit Windows programs need the 32-bit runtime.
 dpkg --add-architecture i386
 apt-get update
@@ -35,5 +47,9 @@ pinned=firefox-esr.desktop, foot.desktop
 [general]
 firstRunDone=true
 CONF
+
+# The user was created before these skel files were written; copy them in.
+cp -rT /etc/skel /home/user
+chown -R user:user /home/user
 
 systemctl set-default multi-user.target

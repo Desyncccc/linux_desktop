@@ -38,8 +38,10 @@ live-boot
 live-config
 live-config-systemd
 systemd-sysv
-sudo
+libpam-systemd
+dbus
 dbus-user-session
+sudo
 polkitd
 locales
 console-setup

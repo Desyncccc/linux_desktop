@@ -10,6 +10,14 @@ export XDG_SESSION_DESKTOP=vitrum
 export XDG_SESSION_TYPE=wayland
 export DESKTOP_SESSION=vitrum
 
+# Wayland needs a private runtime directory (normally created by logind).
+if [ -z "$XDG_RUNTIME_DIR" ] || [ ! -d "$XDG_RUNTIME_DIR" ]; then
+    XDG_RUNTIME_DIR="/tmp/vitrum-runtime-$(id -u)"
+    mkdir -p "$XDG_RUNTIME_DIR"
+    chmod 0700 "$XDG_RUNTIME_DIR"
+    export XDG_RUNTIME_DIR
+fi
+
 # Keyboard layout from the system configuration.
 if [ -z "$XKB_DEFAULT_LAYOUT" ] && [ -r /etc/default/keyboard ]; then
     . /etc/default/keyboard
