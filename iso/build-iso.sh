@@ -34,6 +34,8 @@ lb config \
 # Packages for the live system
 mkdir -p config/package-lists
 cat > config/package-lists/vitrum.list.chroot <<'LIST'
+plymouth
+plymouth-label
 live-boot
 live-config
 live-config-systemd

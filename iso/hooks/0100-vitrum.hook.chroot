@@ -52,4 +52,10 @@ CONF
 cp -rT /etc/skel /home/user
 chown -R user:user /home/user
 
+# Boot splash, and keep kernel/console chatter off the screen.
+plymouth-set-default-theme vitrum || true
+update-initramfs -u -k all || true
+echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
+: > /etc/motd
+
 systemctl set-default multi-user.target
