@@ -142,7 +142,7 @@ void Prefs::seedDefaults()
          QStringLiteral("org.gnome.Epiphany.desktop"), QStringLiteral("org.kde.falkon.desktop")},
         {QStringLiteral("org.kde.dolphin.desktop"), QStringLiteral("org.gnome.Nautilus.desktop"), QStringLiteral("nemo.desktop"),
          QStringLiteral("thunar.desktop"), QStringLiteral("pcmanfm-qt.desktop")},
-        {QStringLiteral("foot.desktop"), QStringLiteral("org.kde.konsole.desktop"), QStringLiteral("org.gnome.Terminal.desktop"),
+        {QStringLiteral("qterminal.desktop"), QStringLiteral("org.kde.konsole.desktop"), QStringLiteral("foot.desktop"), QStringLiteral("org.gnome.Terminal.desktop"),
          QStringLiteral("org.gnome.Console.desktop"), QStringLiteral("kitty.desktop"), QStringLiteral("Alacritty.desktop"),
          QStringLiteral("xfce4-terminal.desktop"), QStringLiteral("weston-terminal.desktop")},
     };

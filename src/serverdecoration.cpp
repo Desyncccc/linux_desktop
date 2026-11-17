@@ -85,7 +85,13 @@ void ServerDecorations::setSurfaceMode(QWaylandSurface *surface, bool server)
         return;
     if (server) {
         m_server.insert(surface);
-        connect(surface, &QObject::destroyed, this, [this, surface] { m_server.remove(surface); }, Qt::UniqueConnection);
+        if (!m_watched.contains(surface)) {
+            m_watched.insert(surface);
+            connect(surface, &QObject::destroyed, this, [this, surface] {
+                m_server.remove(surface);
+                m_watched.remove(surface);
+            });
+        }
     } else {
         m_server.remove(surface);
     }

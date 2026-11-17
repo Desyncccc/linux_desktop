@@ -2,17 +2,31 @@
 # Runs inside the live image while it is built.
 set -e
 
+# The live user. live-config only creates it when the user-setup package is
+# present; creating it here makes autologin independent of that.
+if ! getent passwd user >/dev/null; then
+    useradd --create-home --shell /bin/bash --comment "User" user
+fi
+echo "user:live" | chpasswd
+for g in audio video render input plugdev netdev cdrom sudo dialout; do
+    getent group "$g" >/dev/null && usermod -aG "$g" user
+done
+echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/live-user
+chmod 0440 /etc/sudoers.d/live-user
+
 # 32-bit Windows programs need the 32-bit runtime.
 dpkg --add-architecture i386
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wine32:i386 || true
 
-# Rename the terminal to something familiar.
-if [ -f /usr/share/applications/foot.desktop ]; then
-    sed -i 's/^Name=.*/Name=Command Prompt/; s/^GenericName=.*/GenericName=Command line/' /usr/share/applications/foot.desktop
+# The terminal is presented as "Command Prompt".
+if [ -f /usr/share/applications/qterminal.desktop ]; then
+    sed -i -e 's/^Name=.*/Name=Command Prompt/' -e '/^Name\[/d' \
+           -e 's/^GenericName=.*/GenericName=Command line/' -e '/^GenericName\[/d' \
+           /usr/share/applications/qterminal.desktop
 fi
-# Hide extra terminal variants and server entries from the Start menu.
-for f in footclient.desktop foot-server.desktop; do
+# Hide the drop-down variant.
+for f in qterminal_drop.desktop qterminal-drop.desktop; do
     [ -f /usr/share/applications/$f ] && echo "NoDisplay=true" >> /usr/share/applications/$f
 done
 
@@ -23,17 +37,34 @@ pref("browser.tabs.inTitlebar", 0);
 pref("widget.use-xdg-desktop-portal.file-picker", 0);
 PREF
 
-# Default taskbar pins for new users.
+# Default taskbar pins for new users, using the launcher names actually
+# installed (Debian's Firefox launcher name varies between releases).
+pins=""
+for id in firefox-esr.desktop firefox.desktop org.mozilla.firefox.desktop; do
+    if [ -f "/usr/share/applications/$id" ]; then pins="$id"; break; fi
+done
+[ -f /usr/share/applications/qterminal.desktop ] && pins="${pins:+$pins, }qterminal.desktop"
+echo "Default pins: $pins"
 mkdir -p /etc/skel/.config/Vitrum
-cat > /etc/skel/.config/Vitrum/vitrum.conf <<'CONF'
+cat > /etc/skel/.config/Vitrum/vitrum.conf <<CONF
 [taskbar]
-pinned=firefox-esr.desktop, foot.desktop
+pinned=$pins
 
 [start]
-pinned=firefox-esr.desktop, foot.desktop
+pinned=$pins
 
 [general]
 firstRunDone=true
 CONF
+
+# The user was created before these skel files were written; copy them in.
+cp -rT /etc/skel /home/user
+chown -R user:user /home/user
+
+# Boot splash, and keep kernel/console chatter off the screen.
+plymouth-set-default-theme vitrum || true
+update-initramfs -u -k all || true
+echo "kernel.printk = 3 3 3 3" > /etc/sysctl.d/20-quiet-printk.conf
+: > /etc/motd
 
 systemctl set-default multi-user.target

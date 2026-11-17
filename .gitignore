@@ -3,3 +3,4 @@
 /iso/packages/
 /screenshots/
 *.user
+/.claude/worktrees/

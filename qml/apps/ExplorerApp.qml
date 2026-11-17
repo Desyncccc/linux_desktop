@@ -21,7 +21,13 @@ FocusScope {
     property bool showHidden: false
 
     Component.onCompleted: navigate(location, true)
-    onPathChanged: if (history[historyIndex] !== location) navigate(location, true)
+    // Use `path` itself here: the derived `location` binding may not have
+    // re-evaluated yet when this handler runs.
+    onPathChanged: {
+        const target = path.length > 0 ? path : Files.home
+        if (history[historyIndex] !== target)
+            navigate(target, true)
+    }
 
     function titleFor(p) {
         if (p === "::computer") return "Computer"

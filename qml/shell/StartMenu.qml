@@ -26,7 +26,11 @@ Item {
         const q = query.toLowerCase()
         return pages.filter(p => p.name.toLowerCase().indexOf(q) >= 0 || p.keys.indexOf(q) >= 0)
     }
-    readonly property var pinned: { Prefs.startPinned; return Apps.appsForIds(Prefs.startPinned) }
+    readonly property var pinned: {
+        Prefs.startPinned
+        const apps = Apps.appsForIds(Prefs.startPinned)
+        return apps.length > 0 ? apps : Apps.appsForIds(["notepad", "calculator", "explorer", "paint"].map(k => Apps.idForInternal(k)))
+    }
     readonly property var frequent: {
         Prefs.launchCountsChanged; Apps.count
         const ids = Prefs.frequentApps(10).filter(id => Prefs.startPinned.indexOf(id) < 0)
@@ -136,7 +140,7 @@ Item {
             clip: true
             boundsBehavior: Flickable.StopAtBounds
             property var expanded: ({})
-            model: { Apps.count; return menu.open && Shell.startAllPrograms ? Apps.categoryGroups() : [] }
+            model: { Apps.count; return menu.open && Shell.startAllPrograms ? [{ category: "Accessories (built-in)", apps: menu.builtins }].concat(Apps.categoryGroups()) : [] }
             delegate: Column {
                 id: grp
                 required property var modelData

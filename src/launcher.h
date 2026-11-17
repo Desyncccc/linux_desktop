@@ -35,6 +35,8 @@ public:
     Q_INVOKABLE bool openTerminal(const QString &workingDir = {});
     Q_INVOKABLE bool commandExists(const QString &program) const;
     Q_INVOKABLE void runAutostart();
+    static QString appLogPath();
+    static void appendToAppLog(const QString &line);
 
 private:
     explicit Launcher(QObject *parent = nullptr);

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Vitrum
+Description=Vitrum boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/vitrum
+ScriptFile=/usr/share/plymouth/themes/vitrum/vitrum.script

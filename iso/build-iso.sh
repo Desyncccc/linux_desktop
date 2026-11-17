@@ -29,17 +29,21 @@ lb config \
     --iso-application "Vitrum" \
     --iso-volume "VITRUM_LIVE" \
     --iso-publisher "Vitrum" \
-    --bootappend-live "boot=live components quiet splash loglevel=3 vt.global_cursor_default=0 hostname=vitrum username=user user-fullname=User locales=en_US.UTF-8 keyboard-layouts=us live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,input,render,sudo"
+    --bootappend-live "boot=live components quiet splash loglevel=3 vt.global_cursor_default=0 hostname=vitrum username=user live-config.noautologin user-fullname=User locales=en_US.UTF-8 keyboard-layouts=us live-config.user-default-groups=audio,cdrom,dip,floppy,video,plugdev,netdev,input,render,sudo"
 
 # Packages for the live system
 mkdir -p config/package-lists
 cat > config/package-lists/vitrum.list.chroot <<'LIST'
+plymouth
+plymouth-label
 live-boot
 live-config
 live-config-systemd
 systemd-sysv
-sudo
+libpam-systemd
+dbus
 dbus-user-session
+sudo
 polkitd
 locales
 console-setup
@@ -52,11 +56,13 @@ libgl1-mesa-dri
 libegl-mesa0
 libgbm1
 qt6-qpa-plugins
+qt6-svg-plugins
 qt6-wayland
 xserver-xorg-core
 xserver-xorg-input-libinput
 xinit
-foot
+qterminal
+fonts-dejavu-core
 firefox-esr
 xdg-utils
 icoutils

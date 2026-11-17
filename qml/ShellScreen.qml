@@ -269,8 +269,10 @@ Item {
         id: welcome
         interval: 1500
         onTriggered: {
-            if (!Prefs.firstRunDone || Session.env("VITRUM_WELCOME") === "1")
+            if (!Prefs.welcomeShown || Session.env("VITRUM_WELCOME") === "1") {
+                Prefs.welcomeShown = true
                 Shell.notify("Welcome to Vitrum", "Press the Start button or the Windows key to get started.", Theme.icon("vitrum"))
+            }
         }
     }
 
