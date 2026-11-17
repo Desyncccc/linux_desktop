@@ -1,0 +1,52 @@
+/* Vitrum installer: glass-era dialog look. */
+QWidget {
+    font-family: "Open Sans", "Noto Sans", sans-serif;
+    font-size: 10pt;
+}
+QPushButton {
+    min-width: 76px;
+    min-height: 22px;
+    padding: 2px 12px;
+    color: #000000;
+    border: 1px solid #707070;
+    border-radius: 3px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #f2f2f2, stop:0.5 #ebebeb, stop:0.51 #dddddd, stop:1 #cfcfcf);
+}
+QPushButton:hover {
+    border-color: #3c7fb1;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #eaf6fd, stop:0.5 #d9f0fc, stop:0.51 #bee6fd, stop:1 #a7d9f5);
+}
+QPushButton:pressed {
+    border-color: #2c628b;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #e5f4fc, stop:0.5 #c4e5f6, stop:0.51 #98d1ef, stop:1 #68b3db);
+}
+QPushButton:default {
+    border-color: #3399ff;
+}
+QPushButton:disabled {
+    color: #838383;
+    border-color: #adb2b5;
+    background: #f4f4f4;
+}
+QLineEdit, QComboBox {
+    min-height: 22px;
+    border: 1px solid #abadb3;
+    background: #ffffff;
+    padding: 1px 4px;
+}
+QLineEdit:focus, QComboBox:focus {
+    border-color: #3d7bad;
+}
+QProgressBar {
+    border: 1px solid #bcbcbc;
+    border-radius: 2px;
+    background: #e6e6e6;
+    text-align: center;
+    height: 18px;
+}
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7fe07a, stop:0.5 #37c42f, stop:1 #06b025);
+}

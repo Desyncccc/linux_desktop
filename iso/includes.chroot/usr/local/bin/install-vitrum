@@ -1,0 +1,7 @@
+#!/bin/sh
+# Starts the Vitrum installer (Calamares) as root on the Vitrum desktop.
+exec sudo env \
+    WAYLAND_DISPLAY="$WAYLAND_DISPLAY" XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+    QT_QPA_PLATFORM=wayland XCURSOR_THEME="$XCURSOR_THEME" XCURSOR_SIZE="$XCURSOR_SIZE" \
+    LANG="${LANG:-C.UTF-8}" \
+    calamares "$@"

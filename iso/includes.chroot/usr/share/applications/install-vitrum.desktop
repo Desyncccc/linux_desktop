@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Vitrum
+Comment=Install Vitrum on this computer's disk
+Exec=install-vitrum
+Icon=vitrum
+Terminal=false
+Categories=System;
+Keywords=install;installer;setup;disk;

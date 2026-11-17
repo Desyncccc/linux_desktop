@@ -77,6 +77,13 @@ adwaita-icon-theme
 dmz-cursor-theme
 hicolor-icon-theme
 spice-vdagent
+calamares
+squashfs-tools
+rsync
+os-prober
+ucf
+mokutil
+efibootmgr
 open-vm-tools
 LIST
 

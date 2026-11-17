@@ -1,0 +1,11 @@
+#!/bin/sh
+# Vitrum installer, inside the new system before the user account is made:
+# remove what only the live session needs (its "user" account, password-less
+# sudo and the autologin for that account).
+if id user >/dev/null 2>&1; then
+    userdel -r user 2>/dev/null || userdel user 2>/dev/null || true
+fi
+rm -rf /home/user
+rm -f /etc/sudoers.d/live-user
+rm -f /etc/systemd/system/getty@tty1.service.d/zz-vitrum-autologin.conf
+exit 0

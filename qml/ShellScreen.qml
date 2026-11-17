@@ -19,7 +19,10 @@ Item {
         Shell.screenWidth = width
         Shell.screenHeight = height
         desktopIcons.forceActiveFocus()
-        if (!Session.demo)
+        // Installed systems open at the sign-in screen (the lock screen).
+        if (Session.env("VITRUM_START_LOCKED") === "1")
+            Shell.lock()
+        else if (!Session.demo)
             welcome.start()
     }
     onWidthChanged: Shell.screenWidth = width

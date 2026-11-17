@@ -1,0 +1,56 @@
+#!/bin/sh
+# Vitrum installer, inside the new system after everything is in place.
+dpkg --configure -a 2>/dev/null || true
+
+# Start Vitrum on the first console for the new account. It opens at the
+# sign-in screen, which asks for the account's password.
+newuser=$(awk -F: '$3 >= 1000 && $3 < 60000 { print $1; exit }' /etc/passwd)
+if [ -n "$newuser" ]; then
+    mkdir -p /etc/systemd/system/getty@tty1.service.d
+    cat > /etc/systemd/system/getty@tty1.service.d/zz-vitrum-autologin.conf <<CONF
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $newuser --noclear %I \$TERM
+CONF
+    for g in audio video render input plugdev netdev; do
+        getent group "$g" >/dev/null && usermod -aG "$g" "$newuser"
+    done
+    home=$(getent passwd "$newuser" | cut -d: -f6)
+    [ -n "$home" ] && [ -d "$home" ] && touch "$home/.hushlogin" && chown "$newuser": "$home/.hushlogin"
+fi
+# Sign-in screen at startup, unless "Log in automatically" was ticked
+# (the installer then puts the account in the autologin group).
+mkdir -p /etc/vitrum
+if [ -n "$newuser" ] && id -nG "$newuser" 2>/dev/null | tr ' ' '\n' | grep -qx autologin; then
+    rm -f /etc/vitrum/sign-in-required
+else
+    : > /etc/vitrum/sign-in-required
+fi
+systemctl set-default multi-user.target 2>/dev/null || true
+
+# Boot straight into Vitrum. Only show the boot menu if another operating
+# system (e.g. Windows) is installed, so it can still be chosen.
+others=0
+if command -v os-prober >/dev/null 2>&1; then
+    others=$(os-prober 2>/dev/null | wc -l)
+fi
+mkdir -p /etc/default/grub.d
+{
+    echo 'GRUB_DISTRIBUTOR="Vitrum"'
+    echo 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3 vt.global_cursor_default=0"'
+    echo 'GRUB_DISABLE_OS_PROBER=false'
+    if [ "$others" -gt 0 ]; then
+        echo 'GRUB_TIMEOUT=5'
+        echo 'GRUB_TIMEOUT_STYLE=menu'
+    else
+        echo 'GRUB_TIMEOUT=0'
+        echo 'GRUB_TIMEOUT_STYLE=hidden'
+    fi
+} > /etc/default/grub.d/90-vitrum.cfg
+update-grub 2>&1 || true
+
+# Installer leftovers.
+rm -rf /usr/lib/vitrum/installer/bios /usr/lib/vitrum/installer/efi
+rm -f /usr/local/bin/install-vitrum /usr/share/applications/install-vitrum.desktop
+rm -rf /etc/calamares
+exit 0

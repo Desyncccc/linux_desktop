@@ -64,7 +64,23 @@ CONF
 
 # The user was created before these skel files were written; copy them in.
 cp -rT /etc/skel /home/user
+
+# Installer: "Install Vitrum" on the live desktop (live account only, so
+# installed systems don't get it), and the boot loader packages for both
+# firmware types kept on the image so installing needs no network.
+mkdir -p /home/user/Desktop
+cp /usr/share/applications/install-vitrum.desktop /home/user/Desktop/
+chmod +x /home/user/Desktop/install-vitrum.desktop
 chown -R user:user /home/user
+for set in bios efi; do
+    dir=/usr/lib/vitrum/installer/$set
+    mkdir -p "$dir/partial"
+    if [ "$set" = bios ]; then pkgs="grub-pc"; else pkgs="grub-efi-amd64 grub-efi-amd64-signed shim-signed"; fi
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --download-only --no-install-recommends \
+        -o Dir::Cache::archives="$dir" $pkgs
+    rm -rf "$dir/partial" "$dir/lock"
+    echo "Installer $set packages:"; ls "$dir"
+done
 
 # Boot splash, and keep kernel/console chatter off the screen.
 plymouth-set-default-theme vitrum || true

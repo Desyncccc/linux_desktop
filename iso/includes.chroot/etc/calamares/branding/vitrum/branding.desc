@@ -1,0 +1,37 @@
+---
+componentName: vitrum
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 860px,600px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+    productName: Vitrum
+    shortProductName: Vitrum
+    version: ""
+    shortVersion: ""
+    versionedName: Vitrum
+    shortVersionedName: Vitrum
+    bootloaderEntryName: Vitrum
+    productUrl: ""
+    supportUrl: ""
+    knownIssuesUrl: ""
+    releaseNotesUrl: ""
+    donateUrl: ""
+
+images:
+    productLogo: "logo.png"
+    productIcon: "logo.png"
+    productWelcome: "welcome.png"
+
+slideshow: "show.qml"
+slideshowAPI: 2
+
+style:
+    SidebarBackground: "#1b4a87"
+    SidebarText: "#ffffff"
+    SidebarTextCurrent: "#ffffff"
+    SidebarBackgroundCurrent: "#3a7bd0"
