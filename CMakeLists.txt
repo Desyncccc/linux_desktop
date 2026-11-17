@@ -57,6 +57,7 @@ qt_add_qml_module(vitrumbackend
         src/notifications.cpp src/notifications.h
         src/prefs.cpp src/prefs.h
         src/serverdecoration.cpp src/serverdecoration.h
+        src/paintcanvas.cpp src/paintcanvas.h
         src/session.cpp src/session.h
         src/systemstatus.cpp src/systemstatus.h
 )

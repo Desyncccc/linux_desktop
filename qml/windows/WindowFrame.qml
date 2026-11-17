@@ -233,6 +233,9 @@ Item {
         if (closing)
             return
         if (isInternal) {
+            // Apps may veto (e.g. to ask about unsaved changes) and close later.
+            if (internalItem && typeof internalItem.requestClose === "function" && !internalItem.requestClose())
+                return
             closing = true
             closeAnim.start()
         } else if (toplevel) {
