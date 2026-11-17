@@ -74,6 +74,7 @@ wine64
 fonts-noto-core
 fonts-open-sans
 adwaita-icon-theme
+dmz-cursor-theme
 hicolor-icon-theme
 spice-vdagent
 open-vm-tools

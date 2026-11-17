@@ -29,11 +29,16 @@ Item {
     readonly property var pinned: {
         Prefs.startPinned
         const apps = Apps.appsForIds(Prefs.startPinned)
-        return apps.length > 0 ? apps : Apps.appsForIds(["notepad", "calculator", "explorer", "paint"].map(k => Apps.idForInternal(k)))
+        return apps
     }
     readonly property var frequent: {
         Prefs.launchCountsChanged; Apps.count
-        const ids = Prefs.frequentApps(10).filter(id => Prefs.startPinned.indexOf(id) < 0)
+        const shown = pinned.map(a => a.desktopId)
+        let ids = Prefs.frequentApps(10).filter(id => Prefs.startPinned.indexOf(id) < 0 && shown.indexOf(id) < 0)
+        // A fresh account starts with the accessories people look for first,
+        // like the glass-era Start menu did.
+        const starters = ["calculator", "stickynotes", "snippingtool", "paint", "notepad", "explorer"].map(k => Apps.idForInternal(k))
+        ids = ids.concat(starters.filter(id => ids.indexOf(id) < 0 && shown.indexOf(id) < 0))
         return Apps.appsForIds(ids.slice(0, Math.max(0, 9 - pinned.length)))
     }
 
@@ -383,7 +388,7 @@ Item {
         Link { text: "Computer"; onActivated: Shell.openExplorer("::computer") }
         Link { text: "Recycle Bin"; onActivated: Shell.openExplorer(Files.trash) }
         Gap {}
-        Link { text: "Settings"; onActivated: Shell.openSettings("") }
+        Link { text: "Control Panel"; onActivated: Shell.openSettings("") }
         Link { text: "Task Manager"; onActivated: Shell.openTaskManager() }
         Link { text: "Run..."; onActivated: Shell.openRun() }
     }

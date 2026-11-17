@@ -30,6 +30,11 @@ for f in qterminal_drop.desktop qterminal-drop.desktop; do
     [ -f /usr/share/applications/$f ] && echo "NoDisplay=true" >> /usr/share/applications/$f
 done
 
+# The browser is listed the way Windows users know it.
+for f in /usr/share/applications/firefox-esr.desktop /usr/share/applications/firefox.desktop; do
+    [ -f "$f" ] && sed -i -e 's/^Name=.*/Name=Mozilla Firefox/' -e '/^Name\[/d' "$f"
+done
+
 # Firefox: use the system (Vitrum) title bar instead of drawing its own.
 mkdir -p /usr/lib/firefox-esr/defaults/pref
 cat > /usr/lib/firefox-esr/defaults/pref/vitrum.js <<'PREF'

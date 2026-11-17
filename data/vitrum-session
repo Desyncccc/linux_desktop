@@ -27,6 +27,13 @@ case "${LC_ALL:-${LANG:-}}" in
         unset LC_ALL ;;
 esac
 
+# White arrow pointers, the look people know from Windows, for the shell and
+# every application (unless the user picked another cursor theme).
+if [ -z "$XCURSOR_THEME" ] && [ -d /usr/share/icons/DMZ-White/cursors ]; then
+    export XCURSOR_THEME=DMZ-White
+fi
+export XCURSOR_SIZE="${XCURSOR_SIZE:-24}"
+
 # Keyboard layout from the system configuration.
 if [ -z "$XKB_DEFAULT_LAYOUT" ] && [ -r /etc/default/keyboard ]; then
     . /etc/default/keyboard
