@@ -450,6 +450,8 @@ QVariantMap Files::info(const QString &path) const
         {QStringLiteral("files"), count},
         {QStringLiteral("modified"), QLocale().toString(fi.lastModified(), QLocale::LongFormat)},
         {QStringLiteral("created"), QLocale().toString(fi.birthTime().isValid() ? fi.birthTime() : fi.metadataChangeTime(), QLocale::LongFormat)},
+        {QStringLiteral("modifiedShort"), QLocale().toString(fi.lastModified(), QLocale::ShortFormat)},
+        {QStringLiteral("createdShort"), QLocale().toString(fi.birthTime().isValid() ? fi.birthTime() : fi.metadataChangeTime(), QLocale::ShortFormat)},
         {QStringLiteral("owner"), fi.owner()},
         {QStringLiteral("readOnly"), !fi.isWritable()},
         {QStringLiteral("hidden"), fi.isHidden()},
