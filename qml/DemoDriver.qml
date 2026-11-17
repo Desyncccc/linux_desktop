@@ -53,6 +53,8 @@ Item {
         else
             console.info("demo: sticky notes restored", wins.length, "notes")
     }
+    property var paintWin: null
+    property var snipWin: null
 
     function shot(name) {
         const n = (shotNo < 10 ? "0" : "") + shotNo
@@ -63,6 +65,83 @@ Item {
         else
             console.info("demo: saved", path)
     }
+
+    // Paint: draw with several tools through the same entry points the mouse uses.
+    function paintScene() {
+        const a = paintWin.internalItem
+        a.setTool("shape"); a.shape = "rectangle"; a.fillStyle = "solid"; a.color2 = "#99d9ea"; a.sizeChoice = { pencil: 0, brush: 1, airbrush: 1, eraser: 1, shape: 1 }
+        a.drag([[40, 40], [200, 120], [260, 170]])
+        a.shape = "oval"; a.color1 = "#3f48cc"; a.color2 = "#fff200"
+        a.drag([[300, 40], [420, 150]])
+        a.shape = "star5"; a.color1 = "#880015"; a.color2 = "#ffaec9"
+        a.drag([[450, 30], [590, 165]])
+        a.shape = "arrowright"; a.fillStyle = "none"; a.color1 = "#22b14c"
+        a.drag([[40, 200], [200, 270]])
+        a.shape = "heart"; a.fillStyle = "solid"; a.color1 = "#ed1c24"; a.color2 = "#ed1c24"
+        a.drag([[230, 195], [320, 280]])
+        a.color2 = "#ffffff"
+        a.setTool("brush"); a.brushStyle = "brush"; a.color1 = "#00a2e8"
+        const wave = []
+        for (let i = 0; i <= 60; ++i) wave.push([350 + i * 6, 240 + Math.sin(i / 6) * 30])
+        a.drag(wave)
+        a.brushStyle = "calligraphy1"; a.color1 = "#a349a4"
+        const wave2 = []
+        for (let i = 0; i <= 50; ++i) wave2.push([360 + i * 6, 300 + Math.cos(i / 5) * 18])
+        a.drag(wave2)
+        a.setTool("pencil"); a.color1 = "#000000"
+        const spiral = []
+        for (let i = 0; i <= 120; ++i) { const t = i / 10; spiral.push([110 + Math.cos(t) * t * 5, 380 + Math.sin(t) * t * 5]) }
+        a.drag(spiral)
+        a.setTool("fill"); a.color1 = "#ffc90e"
+        a.click(100, 80)
+        a.setTool("text"); a.color1 = "#1e395b"; a.textPoints = 20; a.textBold = true
+        a.drag([[220, 330], [520, 380]])
+        a.typeText("Hello from Vitrum Paint")
+        a.commitText()
+        a.setTool("select")
+        a.drag([[440, 20], [600, 180]])
+        a.move(300, 200, 0)
+    }
+
+    // Paint and Snipping Tool, spliced into the tour below.
+    readonly property var appSteps: [
+        [100, () => { paintWin = screen.openInternal("paint", {}) }, ""],
+        [900, () => paintScene(), ""],
+        [400, () => {}, "paint"],
+        [100, () => { paintWin.internalItem.tab = "view"; paintWin.internalItem.showRulers = true; paintWin.internalItem.zoomTo(2) }, ""],
+        [500, () => {}, "paint-view"],
+        [100, () => { const a = paintWin.internalItem; a.zoomTo(1); a.tab = "home"; a.popup = "appmenu"; a.appMenuPane = "saveas" }, ""],
+        [500, () => {}, "paint-menu"],
+        [100, () => { paintWin.internalItem.saveAs(0) }, ""],
+        [600, () => {}, "paint-save-as"],
+        [100, () => { paintWin.internalItem.closeDialogs(); paintWin.close() }, ""],
+        [600, () => {}, "paint-close-prompt"],
+        [100, () => { paintWin.internalItem.closeDialogs(); paintWin.internalItem.editColors() }, ""],
+        [600, () => {}, "paint-edit-colors"],
+        [100, () => { paintWin.internalItem.closeDialogs(); paintWin.internalItem.paintCanvas.selectAll(); paintWin.internalItem.showResize() }, ""],
+        [600, () => {}, "paint-resize"],
+        [100, () => { paintWin.internalItem.closeDialogs(); paintWin.internalItem.paintCanvas.clearSelection(); snipWin = screen.openInternal("snippingtool", {}) }, ""],
+        [700, () => {}, "snipping-tool"],
+        [100, () => { snipWin.internalItem.newSnip("rect") }, ""],
+        [900, () => { const o = snipWin.internalItem.overlay; o.press(330, 120, Qt.LeftButton); o.move(600, 300); o.move(860, 470) }, ""],
+        [300, () => {}, "snip-overlay"],
+        [100, () => { snipWin.internalItem.overlay.release(860, 470) }, ""],
+        [700, () => {
+            const s = snipWin.internalItem
+            s.inkStroke([[40, 60], [60, 52], [90, 48], [130, 50], [170, 58], [200, 70]], "highlighter")
+            const circle = []
+            for (let i = 0; i <= 40; ++i) circle.push([330 + Math.cos(i / 40 * 7) * 90, 130 + Math.sin(i / 40 * 7) * 60])
+            s.penColor = "#e2231a"
+            s.inkStroke(circle, "pen")
+            s.inkStroke([[60, 300], [140, 250], [220, 300], [300, 250]], "pen")
+            s.inkTool = "pen"
+        }, ""],
+        [500, () => {}, "snip-editor"],
+        [100, () => { // leave without the save prompts
+            paintWin.internalItem.paintCanvas.modified = false; paintWin.close()
+            snipWin.internalItem.editorCanvas.modified = false; snipWin.close()
+        }, ""]
+    ]
 
     // [delay before action (ms), action, screenshot name or ""]
     readonly property var steps: [
@@ -133,6 +212,7 @@ Item {
             if (wins[0].internalItem.readStore().notes.length !== 1)
                 console.warn("demo: sticky note was not deleted from the store")
             wins[0].close() }, ""],
+        ...appSteps,
         [100, () => { Shell.activateNext(); if (settingsWin) { Shell.activate(settingsWin); settingsWin.internalItem.page = "personalize" } Prefs.theme = "modern"; Prefs.taskbarCentered = true }, ""],
         [900, () => {}, "theme-modern"],
         [100, () => { Prefs.theme = "basic"; Prefs.taskbarCentered = false }, ""],

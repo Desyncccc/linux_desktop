@@ -111,7 +111,7 @@ Item {
         photos:      { component: photosApp, title: "Photo Viewer", icon: Theme.icon("image-file"), w: 820, h: 600 },
         message:     { component: messageApp, title: "Vitrum", icon: Theme.icon("about"), w: 420, h: 170, resizable: false },
         calculator:  { component: calculatorApp, title: "Calculator", icon: Theme.icon("calculator"), w: 212, h: 288, resizable: false },
-        paint:       { component: paintApp, title: "Untitled - Paint", icon: Theme.icon("paint"), w: 900, h: 640 },
+        paint:       { component: paintApp, title: "Untitled - Paint", icon: Theme.icon("paint"), w: 1060, h: 680 },
         stickynotes: { component: stickyNotesApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 200, h: 200, resizable: false, frameless: true },
         stickyconfirm: { component: stickyConfirmApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 380, h: 124, resizable: false },
         snippingtool:{ component: snippingToolApp, title: "Snipping Tool", icon: Theme.icon("snippingtool"), w: 420, h: 96 }

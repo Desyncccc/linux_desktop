@@ -108,21 +108,24 @@ Item {
         if (!constructed || placed || contentWidth <= 0 || contentHeight <= 0)
             return
         placed = true
+        // Use the size the frame is about to have: during construction the
+        // width/height bindings may not have been evaluated yet.
+        const w = contentWidth + 2 * bw, h = contentHeight + th + bw
         const a = Shell.workArea
         let parentWin = null
         if (toplevel && toplevel.parentToplevel)
             parentWin = Shell.windowForSurface(toplevel.parentToplevel.xdgSurface.surface)
         if (parentWin) {
-            x = parentWin.x + (parentWin.width - width) / 2
-            y = parentWin.y + (parentWin.height - height) / 2
+            x = parentWin.x + (parentWin.width - w) / 2
+            y = parentWin.y + (parentWin.height - h) / 2
         } else {
             const n = Shell.windows.length % 8
-            x = a.x + (a.width - width) / 2 + (n - 3) * 22
-            y = a.y + Math.max(0, (a.height - height) / 2 - 30) + (n - 3) * 18
+            x = a.x + (a.width - w) / 2 + (n - 3) * 22
+            y = a.y + Math.max(0, (a.height - h) / 2 - 30) + (n - 3) * 18
         }
-        x = Math.max(a.x, Math.min(x, a.x + a.width - width))
-        y = Math.max(a.y, Math.min(y, a.y + a.height - Math.min(height, 80)))
-        if (width > a.width || height > a.height)
+        x = Math.max(a.x, Math.min(x, a.x + a.width - w))
+        y = Math.max(a.y, Math.min(y, a.y + a.height - Math.min(h, 80)))
+        if (w > a.width || h > a.height)
             Qt.callLater(maximize)
     }
 
@@ -242,6 +245,9 @@ Item {
         if (closing)
             return
         if (isInternal) {
+            // Apps may veto (e.g. to ask about unsaved changes) and close later.
+            if (internalItem && typeof internalItem.requestClose === "function" && !internalItem.requestClose())
+                return
             closing = true
             closeAnim.start()
         } else if (toplevel) {
