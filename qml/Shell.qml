@@ -83,7 +83,7 @@ QtObject {
             { text: "Apps and programs", icon: Theme.icon("apps"), action: () => { shell.startOpen = true; shell.startAllPrograms = true } },
             { text: "System", icon: Theme.icon("about"), action: () => shell.openAbout() },
             { text: "Task Manager", icon: Theme.icon("taskmanager"), action: () => shell.openTaskManager() },
-            { text: "Settings", icon: Theme.icon("settings"), action: () => shell.openSettings("") },
+            { text: "Control Panel", icon: Theme.icon("settings"), action: () => shell.openSettings("") },
             { text: "File Explorer", icon: Theme.icon("folder"), action: () => shell.openExplorer("") },
             { text: "Search", icon: Theme.icon("search"), action: () => shell.toggleStart() },
             { text: "Run", icon: Theme.icon("run"), action: () => shell.openRun() },

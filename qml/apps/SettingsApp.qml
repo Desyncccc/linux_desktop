@@ -18,7 +18,7 @@ FocusScope {
         { id: "time", title: "Date and time", icon: Theme.icon("settings") },
         { id: "about", title: "About", icon: Theme.icon("about") }
     ]
-    onCurrentChanged: if (frame) frame.internalTitle = "Settings - " + (pages.find(p => p.id === current) || pages[0]).title
+    onCurrentChanged: if (frame) frame.internalTitle = "Control Panel - " + (pages.find(p => p.id === current) || pages[0]).title
 
     // Sidebar (light blue gradient like a classic control panel task pane)
     Rectangle {
@@ -34,7 +34,7 @@ FocusScope {
             x: 10; y: 14
             width: parent.width - 20
             spacing: 2
-            VText { text: "Settings"; font.pixelSize: Theme.fontSizeLarge; color: "#1e3287"; bottomPadding: 10; leftPadding: 4 }
+            VText { text: "Control Panel"; font.pixelSize: Theme.fontSizeLarge; color: "#1e3287"; bottomPadding: 10; leftPadding: 4 }
             Repeater {
                 model: app.pages
                 delegate: HoverItem {

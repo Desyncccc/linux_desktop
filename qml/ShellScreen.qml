@@ -101,7 +101,7 @@ Item {
     Component { id: snippingToolApp; SnippingToolApp {} }
 
     readonly property var internalSpecs: ({
-        settings:    { component: settingsApp, title: "Settings", icon: Theme.icon("settings"), w: 860, h: 580, single: true },
+        settings:    { component: settingsApp, title: "Control Panel", icon: Theme.icon("settings"), w: 860, h: 580, single: true },
         explorer:    { component: explorerApp, title: "Explorer", icon: Theme.icon("folder"), w: 880, h: 560 },
         run:         { component: runApp, title: "Run", icon: Theme.icon("run"), w: 410, h: 186, single: true, resizable: false },
         taskmanager: { component: taskManagerApp, title: "Task Manager", icon: Theme.icon("taskmanager"), w: 520, h: 520, single: true },
