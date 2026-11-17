@@ -52,6 +52,7 @@ qt_add_qml_module(vitrumbackend
         src/appmodel.cpp src/appmodel.h
         src/authenticator.cpp src/authenticator.h
         src/compat.cpp src/compat.h
+        src/dirmodel.cpp src/dirmodel.h
         src/files.cpp src/files.h
         src/keyfilter.cpp src/keyfilter.h
         src/launcher.cpp src/launcher.h

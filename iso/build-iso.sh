@@ -60,6 +60,9 @@ qt6-svg-plugins
 qt6-wayland
 xserver-xorg-core
 xserver-xorg-input-libinput
+xserver-xorg-video-fbdev
+xserver-xorg-video-vesa
+xserver-xorg-video-vmware
 xinit
 qterminal
 fonts-dejavu-core
@@ -83,7 +86,7 @@ cp "$SRC"/iso/packages/*.deb config/packages.chroot/
 # Files and hooks
 cp -r "$SRC/iso/includes.chroot" config/
 mkdir -p config/hooks/normal
-cp "$SRC"/iso/hooks/*.hook.chroot config/hooks/normal/
+cp "$SRC"/iso/hooks/*.hook.chroot "$SRC"/iso/hooks/*.hook.binary config/hooks/normal/
 
 lb build
 

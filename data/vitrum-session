@@ -48,6 +48,12 @@ run() {
     fi
 }
 
+# "Safe graphics" boot option: render in software even if the GPU driver
+# offers 3D (works around broken or disabled 3D in some virtual machines).
+if grep -qw vitrum.safe-graphics /proc/cmdline 2>/dev/null; then
+    export LIBGL_ALWAYS_SOFTWARE=1
+fi
+
 export QT_QPA_PLATFORM=eglfs
 export QT_QPA_EGLFS_INTEGRATION=eglfs_kms
 export QT_QPA_EGLFS_ALWAYS_SET_MODE=1

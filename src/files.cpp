@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "files.h"
+#include "dirmodel.h"
+#include <QCollator>
+#include <algorithm>
 #include "compat.h"
 #include "desktopentry.h"
 #include "launcher.h"
@@ -24,7 +27,18 @@ Files::Files(QObject *parent)
 {
 }
 
-Files *Files::create(QQmlEngine *engine, QJSEngine *) { return new Files(engine); }
+static Files *s_files = nullptr;
+Files *Files::instance()
+{
+    if (!s_files)
+        s_files = new Files;
+    return s_files;
+}
+Files *Files::create(QQmlEngine *, QJSEngine *)
+{
+    QQmlEngine::setObjectOwnership(instance(), QQmlEngine::CppOwnership);
+    return instance();
+}
 
 QString Files::home() const { return QDir::homePath(); }
 QString Files::desktop() const
@@ -81,9 +95,28 @@ QString Files::iconName(const QString &path) const
     case Compat::JavaArchive: return QStringLiteral("qrc:/qt/qml/Vitrum/icons/jar.svg");
     case Compat::NotWindows: break;
     }
+    // Our own document icons for common types, so Explorer doesn't show the
+    // stock desktop icon theme.
     static QMimeDatabase db;
     const QMimeType mt = db.mimeTypeForFile(fi);
-    return mt.iconName() + QLatin1Char('|') + mt.genericIconName();
+    const QString n = mt.name(), g = mt.genericIconName();
+    auto own = [](const char *icon) { return QStringLiteral("qrc:/qt/qml/Vitrum/icons/") + QLatin1String(icon) + QStringLiteral(".svg"); };
+    if (n == QLatin1String("application/pdf")) return own("file-pdf");
+    if (n == QLatin1String("text/html") || n == QLatin1String("application/xhtml+xml")) return own("file-html");
+    if (n.startsWith(QLatin1String("image/"))) return own("file-image");
+    if (n.startsWith(QLatin1String("audio/"))) return own("file-audio");
+    if (n.startsWith(QLatin1String("video/"))) return own("file-video");
+    if (g == QLatin1String("package-x-generic") || n.contains(QLatin1String("zip")) || n.contains(QLatin1String("compressed"))
+        || n.contains(QLatin1String("tar")) || n.contains(QLatin1String("7z")) || n.contains(QLatin1String("rar")))
+        return own("file-zip");
+    if (g == QLatin1String("x-office-document") || n.contains(QLatin1String("opendocument.text")) || n.contains(QLatin1String("msword"))
+        || n.contains(QLatin1String("wordprocessing")) || n == QLatin1String("application/rtf"))
+        return own("file-doc");
+    if (n == QLatin1String("application/x-shellscript") || n == QLatin1String("application/x-executable")
+        || n == QLatin1String("application/x-pie-executable") || n == QLatin1String("text/x-python3") || n == QLatin1String("text/x-python"))
+        return own("file-script");
+    if (n.startsWith(QLatin1String("text/")) || g == QLatin1String("text-x-generic")) return own("file-text");
+    return own("file-generic");
 }
 
 QString Files::typeName(const QString &path) const
@@ -95,7 +128,72 @@ QString Files::typeName(const QString &path) const
     if (!compat.isEmpty())
         return compat;
     static QMimeDatabase db;
-    return db.mimeTypeForFile(fi).comment();
+    const QMimeType mt = db.mimeTypeForFile(fi);
+    static const QHash<QString, QString> known = {
+        {QStringLiteral("text/plain"), QStringLiteral("Text Document")},
+        {QStringLiteral("application/zip"), QStringLiteral("Compressed (zipped) Folder")},
+        {QStringLiteral("image/jpeg"), QStringLiteral("JPEG image")},
+        {QStringLiteral("image/png"), QStringLiteral("PNG image")},
+        {QStringLiteral("image/bmp"), QStringLiteral("Bitmap image")},
+        {QStringLiteral("image/gif"), QStringLiteral("GIF image")},
+        {QStringLiteral("application/pdf"), QStringLiteral("PDF Document")},
+        {QStringLiteral("text/html"), QStringLiteral("HTML Document")},
+        {QStringLiteral("audio/mpeg"), QStringLiteral("MP3 Format Sound")},
+        {QStringLiteral("video/mp4"), QStringLiteral("MP4 Video")},
+        {QStringLiteral("application/x-shellscript"), QStringLiteral("Script")},
+        {QStringLiteral("application/x-executable"), QStringLiteral("Application")},
+        {QStringLiteral("application/x-sharedlib"), QStringLiteral("Application extension")},
+    };
+    if (known.contains(mt.name()))
+        return known.value(mt.name());
+    if (mt.isDefault())
+        return fi.suffix().isEmpty() ? QStringLiteral("File") : fi.suffix().toUpper() + QStringLiteral(" File");
+    QString c = mt.comment();
+    if (!c.isEmpty())
+        c[0] = c[0].toUpper();
+    return c;
+}
+
+QVariantList Files::subfolders(const QString &path, bool includeHidden) const
+{
+    QVariantList out;
+    QDir::Filters f = QDir::Dirs | QDir::NoDotAndDotDot;
+    if (includeHidden)
+        f |= QDir::Hidden;
+    QCollator coll;
+    coll.setNumericMode(true);
+    coll.setCaseSensitivity(Qt::CaseInsensitive);
+    QFileInfoList list = QDir(path).entryInfoList(f);
+    std::sort(list.begin(), list.end(), [&](const QFileInfo &a, const QFileInfo &b) { return coll.compare(a.fileName(), b.fileName()) < 0; });
+    for (const QFileInfo &fi : list) {
+        if (!includeHidden && DirModel::isSystemEntry(fi.absolutePath(), fi.fileName()))
+            continue;
+        out << QVariantMap{{QStringLiteral("name"), displayName(fi.absoluteFilePath())},
+                           {QStringLiteral("path"), fi.absoluteFilePath()}};
+    }
+    return out;
+}
+
+bool Files::hasSubfolders(const QString &path) const
+{
+    QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot);
+    while (it.hasNext()) {
+        it.next();
+        if (!DirModel::isSystemEntry(path, it.fileName()))
+            return true;
+    }
+    return false;
+}
+
+QString Files::volumeLabel(const QString &mountPoint) const
+{
+    const QVariantList vols = volumes();
+    for (const QVariant &v : vols) {
+        const QVariantMap m = v.toMap();
+        if (m.value(QStringLiteral("path")).toString() == mountPoint)
+            return m.value(QStringLiteral("name")).toString();
+    }
+    return displayName(mountPoint);
 }
 
 QString Files::formatSize(qint64 bytes) const
@@ -121,9 +219,11 @@ QString Files::fileName(const QString &path) const { return QFileInfo(path).file
 QString Files::displayName(const QString &path) const
 {
     if (path == QLatin1String("/"))
-        return QStringLiteral("Local Disk (/)");
+        return QStringLiteral("Local Disk (C:)");
     if (path == home())
         return QStringLiteral("Home");
+    if (path == QLatin1String("/home"))
+        return QStringLiteral("Users");
     if (path.endsWith(QLatin1String(".desktop"))) {
         const DesktopEntry e = DesktopEntry::fromFile(path);
         if (e.isValid() && !e.name().isEmpty())
@@ -293,8 +393,8 @@ QVariantList Files::volumes() const
         if (!interesting || fs == "tmpfs" || fs == "overlay" || fs == "squashfs")
             continue;
         QString name = s.displayName();
-        if (root == QLatin1String("/"))
-            name = QStringLiteral("Local Disk");
+        if (root == QLatin1String("/") || name == root || name.isEmpty())
+            name = root == QLatin1String("/") ? QStringLiteral("Local Disk") : QFileInfo(root).fileName();
         out << QVariantMap{
             {QStringLiteral("name"), name},
             {QStringLiteral("path"), root},
@@ -305,9 +405,24 @@ QVariantList Files::volumes() const
     }
     if (out.isEmpty()) {
         const QStorageInfo r = QStorageInfo::root();
-        out << QVariantMap{{QStringLiteral("name"), QStringLiteral("Local Disk")}, {QStringLiteral("path"), QStringLiteral("/")},
+        out << QVariantMap{{QStringLiteral("name"), QStringLiteral("Local Disk (C:)")}, {QStringLiteral("path"), QStringLiteral("/")},
                            {QStringLiteral("total"), r.bytesTotal()}, {QStringLiteral("free"), r.bytesAvailable()},
                            {QStringLiteral("removable"), false}};
+    }
+    // Drive letters, the way people expect: the system disk is C:.
+    std::stable_sort(out.begin(), out.end(), [](const QVariant &a, const QVariant &b) {
+        return a.toMap().value(QStringLiteral("path")).toString() == QLatin1String("/")
+            && b.toMap().value(QStringLiteral("path")).toString() != QLatin1String("/");
+    });
+    char letter = 'C';
+    for (QVariant &v : out) {
+        QVariantMap m = v.toMap();
+        QString name = m.value(QStringLiteral("name")).toString();
+        if (!name.contains(QLatin1String(":)")) && letter <= 'Z')
+            name += QStringLiteral(" (%1:)").arg(QLatin1Char(letter));
+        ++letter;
+        m.insert(QStringLiteral("name"), name);
+        v = m;
     }
     return out;
 }

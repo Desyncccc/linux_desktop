@@ -24,6 +24,7 @@ class Files : public QObject
 
 public:
     static Files *create(QQmlEngine *, QJSEngine *);
+    static Files *instance();
 
     QString home() const;
     QString desktop() const;
@@ -65,6 +66,11 @@ public:
     Q_INVOKABLE QString readText(const QString &path) const;
     Q_INVOKABLE bool writeText(const QString &path, const QString &text);
     Q_INVOKABLE QStringList siblingImages(const QString &path) const;
+    // Visible subfolders of a folder (navigation tree, address bar menus).
+    Q_INVOKABLE QVariantList subfolders(const QString &path, bool includeHidden = false) const;
+    Q_INVOKABLE bool hasSubfolders(const QString &path) const;
+    // Drive letter-style label for a mount point ("Local Disk (C:)").
+    Q_INVOKABLE QString volumeLabel(const QString &mountPoint) const;
 
 Q_SIGNALS:
     void clipboardChanged();

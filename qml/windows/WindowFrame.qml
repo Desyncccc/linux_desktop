@@ -28,6 +28,9 @@ Item {
     property real internalMinWidth: 220
     property real internalMinHeight: 120
     property bool internalMaximized: false
+    // Some built-in windows (Explorer) leave the caption empty, like the
+    // shell windows of the glass era: the address bar says where you are.
+    property bool internalBareCaption: false
     property alias internalItem: internalLoader.item
     property string uid: ""
 
@@ -391,14 +394,14 @@ Item {
             // Title: icon + text with glow
             AppIcon {
                 id: titleIcon
-                visible: win.framed
+                visible: win.framed && !win.internalBareCaption
                 x: win.bw + 3
                 y: Math.round((win.th - height) / 2) + (win.maximized ? 0 : 1)
                 size: 16
                 name: win.iconSource
             }
             GlowText {
-                visible: win.framed
+                visible: win.framed && !win.internalBareCaption
                 x: titleIcon.x + 22
                 y: titleIcon.y - 1
                 width: captions.x - x - 10

@@ -1,0 +1,61 @@
+#!/bin/sh
+# Runs in the binary (ISO) tree before the image is written. Replaces the
+# stock live-build boot menu, which showed a distribution logo and waited at
+# the menu forever (it sets no timeout), with a hidden menu that starts
+# Vitrum straight away. Hold Shift or press Esc while booting to see it.
+set -e
+cfg=boot/grub/grub.cfg
+[ -f "$cfg" ] || exit 0
+
+kernel=$(ls live/vmlinuz-* 2>/dev/null | head -n1)
+initrd=$(ls live/initrd.img-* 2>/dev/null | head -n1)
+[ -n "$kernel" ] && [ -n "$initrd" ] || { echo "boot-menu hook: kernel/initrd not found" >&2; exit 0; }
+# Keep live-build's kernel command line (first "Live system" entry).
+append=$(sed -n 's/^[[:space:]]*linux[[:space:]]\{1,\}[^ ]*vmlinuz[^ ]* \(.*\)$/\1/p' "$cfg" | head -n1)
+[ -n "$append" ] || append="boot=live components quiet splash"
+
+write_menu() {
+    cat <<CFG
+set default=0
+set timeout_style=hidden
+set timeout=1
+if loadfont /boot/grub/unicode.pf2 ; then
+    set gfxmode=auto
+    insmod all_video
+    insmod gfxterm
+    terminal_output gfxterm
+fi
+set gfxpayload=keep
+set color_normal=light-gray/black
+set color_highlight=white/blue
+set menu_color_normal=light-gray/black
+set menu_color_highlight=white/blue
+
+menuentry "Start Vitrum" {
+    linux /$kernel $append
+    initrd /$initrd
+}
+menuentry "Start Vitrum (safe graphics)" {
+    linux /$kernel $append vitrum.safe-graphics
+    initrd /$initrd
+}
+menuentry "Start Vitrum (basic display, no acceleration)" {
+    linux /$kernel $append nomodeset vitrum.safe-graphics
+    initrd /$initrd
+}
+CFG
+}
+write_menu > "$cfg"
+# Boot from a USB stick image via loopback uses the same menu.
+[ -f boot/grub/loopback.cfg ] && write_menu > boot/grub/loopback.cfg
+# Drop the distribution splash and its theme.
+rm -rf boot/grub/splash.png boot/grub/live-theme
+: > boot/grub/theme.cfg
+# isolinux, if present (BIOS boot on some live-build versions).
+if [ -d isolinux ]; then
+    for f in isolinux/*.cfg; do
+        sed -i 's/^timeout .*/timeout 1/; s/^prompt .*/prompt 0/' "$f" 2>/dev/null || true
+    done
+    rm -f isolinux/splash.png isolinux/splash800x600.png
+fi
+echo "boot-menu hook: wrote hidden Vitrum menu for $kernel"
