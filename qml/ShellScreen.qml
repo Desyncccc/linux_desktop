@@ -97,6 +97,7 @@ Item {
     Component { id: calculatorApp; CalculatorApp {} }
     Component { id: paintApp; PaintApp {} }
     Component { id: stickyNotesApp; StickyNotesApp {} }
+    Component { id: stickyConfirmApp; StickyNoteConfirm {} }
     Component { id: snippingToolApp; SnippingToolApp {} }
 
     readonly property var internalSpecs: ({
@@ -109,9 +110,10 @@ Item {
         notepad:     { component: notepadApp, title: "Untitled - Notepad", icon: Theme.icon("notepad"), w: 720, h: 500 },
         photos:      { component: photosApp, title: "Photo Viewer", icon: Theme.icon("image-file"), w: 820, h: 600 },
         message:     { component: messageApp, title: "Vitrum", icon: Theme.icon("about"), w: 420, h: 170, resizable: false },
-        calculator:  { component: calculatorApp, title: "Calculator", icon: Theme.icon("calculator"), w: 228, h: 322, resizable: false },
+        calculator:  { component: calculatorApp, title: "Calculator", icon: Theme.icon("calculator"), w: 212, h: 288, resizable: false },
         paint:       { component: paintApp, title: "Untitled - Paint", icon: Theme.icon("paint"), w: 900, h: 640 },
-        stickynotes: { component: stickyNotesApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 220, h: 210 },
+        stickynotes: { component: stickyNotesApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 200, h: 200, resizable: false, frameless: true },
+        stickyconfirm: { component: stickyConfirmApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 380, h: 124, resizable: false },
         snippingtool:{ component: snippingToolApp, title: "Snipping Tool", icon: Theme.icon("snippingtool"), w: 420, h: 96 }
     })
 
@@ -145,6 +147,7 @@ Item {
             internalHeight: props.height || spec.h,
             internalResizable: spec.resizable !== false,
             internalMaximizable: spec.resizable !== false,
+            internalFrameless: spec.frameless === true,
             internalProps: props,
             uid: "i" + (nextUid++)
         })
