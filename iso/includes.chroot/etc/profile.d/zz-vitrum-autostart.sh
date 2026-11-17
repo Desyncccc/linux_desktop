@@ -18,12 +18,18 @@ if [ "$(tty)" = "/dev/tty1" ] && [ -z "$WAYLAND_DISPLAY" ] && [ -z "$DISPLAY" ] 
         fi
         # A normal sign-out after a real session: start a fresh one.
         [ "$rc" -eq 0 ] && [ $(( $(date +%s) - start )) -gt 20 ] && continue
+        clear
         echo
-        echo "Vitrum could not start (exit code $rc). Last lines of $log:"
+        echo "  Vitrum couldn't start the display."
         echo
-        tail -n 30 "$log" 2>/dev/null
+        echo "  Restart the computer, press Esc while it starts, and choose"
+        echo "  \"Start Vitrum (safe graphics)\" or \"Start Vitrum (basic display)\"."
+        echo "  In VMware, turning \"Accelerate 3D graphics\" on or off in the"
+        echo "  virtual machine's Display settings can also help."
         echo
-        echo "Type 'vitrum-session' to try again."
+        echo "  Type 'vitrum-session' to try again, or 'sudo reboot' to restart."
+        echo "  Details are in $log"
+        echo
         break
     done
 fi

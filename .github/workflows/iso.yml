@@ -77,13 +77,20 @@ jobs:
           files: out/*.iso
 
   boot-test:
-    name: Boot ISO in QEMU (${{ matrix.vga }} graphics)
+    name: Boot ISO in QEMU (${{ matrix.name }})
     needs: iso
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        vga: [std, virtio]
+        include:
+          - { name: std graphics, vga: std, firmware: bios, boot: kernel, extra: "" }
+          - { name: virtio graphics, vga: virtio, firmware: bios, boot: kernel, extra: "" }
+          # VMware-style UEFI machine (SATA CD-ROM) whose display has no
+          # usable GPU driver: exercises the software and X fallbacks.
+          - { name: vmware display uefi, vga: vmware, firmware: uefi, boot: kernel, extra: "nomodeset" }
+          # The real boot path through the ISO's own menu, as users boot it.
+          - { name: grub uefi, vga: std, firmware: uefi, boot: grub, extra: "" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -93,14 +100,14 @@ jobs:
       - name: Install QEMU
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils socat libarchive-tools imagemagick
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 qemu-utils ovmf socat libarchive-tools imagemagick
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm.rules
           sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm || true
           ls -l /dev/kvm || true
       - name: Boot and capture
-        run: bash iso/boot-test.sh iso-out/*.iso ${{ matrix.vga }} boot-shots
+        run: bash iso/boot-test.sh iso-out/*.iso ${{ matrix.vga }} boot-shots ${{ matrix.firmware }} ${{ matrix.boot }} "${{ matrix.extra }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: boot-test-${{ matrix.vga }}
+          name: boot-test-${{ matrix.vga }}-${{ matrix.firmware }}-${{ matrix.boot }}
           path: boot-shots

@@ -72,6 +72,18 @@ rc=$?
 elapsed=$(( $(date +%s) - start ))
 echo "== vitrum exited with $rc after ${elapsed}s" >>"$log"
 
+# A quick failure with a GPU present is usually a broken or disabled 3D
+# driver (common in virtual machines): try again rendering in software.
+if [ "$rc" -ne 0 ] && [ "$elapsed" -lt 15 ] && [ -z "$LIBGL_ALWAYS_SOFTWARE" ] && ls /dev/dri/card* >/dev/null 2>&1; then
+    echo "== retrying with software rendering" >>"$log"
+    export LIBGL_ALWAYS_SOFTWARE=1
+    start=$(date +%s)
+    run vitrum "$@" >>"$log" 2>&1
+    rc=$?
+    elapsed=$(( $(date +%s) - start ))
+    echo "== vitrum (software) exited with $rc after ${elapsed}s" >>"$log"
+fi
+
 # Exit 0 is a normal sign-out. A quick failure means KMS didn't work.
 if [ "$rc" -ne 0 ] && [ "$elapsed" -lt 15 ] && command -v xinit >/dev/null 2>&1; then
     echo "== falling back to an X server" >>"$log"
