@@ -42,6 +42,10 @@ FocusScope {
     property var expanded: ({ "::favorites": true, "::libraries": true, "::computer": true })
     property int treeRev: 0
     property string typeAhead: ""
+    // Drag and drop
+    property bool dragging: false
+    property var dragPaths: []
+    property point pressPos: Qt.point(0, 0)
 
     readonly property var libraries: [
         { name: "Documents", path: Files.documents, icon: "folder-documents" },
@@ -94,6 +98,77 @@ FocusScope {
     }
     Timer { id: searchDelay; interval: 380; onTriggered: dir.searchText = searchField.text }
     Timer { id: typeAheadReset; interval: 1000; onTriggered: ex.typeAhead = "" }
+
+    // What the pointer carries while dragging files: drawn above every window
+    // so it can be dropped on folders here, in other Explorer windows or in
+    // the navigation tree.
+    Item {
+        id: dragGhost
+        parent: Shell.root
+        z: 100000
+        width: 64; height: 64
+        visible: ex.dragging
+        property var paths: ex.dragPaths
+        property bool copy: false
+        Drag.active: ex.dragging
+        Drag.keys: ["vitrum-files"]
+        Drag.hotSpot.x: 20
+        Drag.hotSpot.y: 20
+        AppIcon {
+            size: 48
+            opacity: 0.75
+            name: dragGhost.paths.length ? ex.fileIcon(Files.iconName(dragGhost.paths[0]), Files.isDir(dragGhost.paths[0]), dragGhost.paths[0]) : ""
+        }
+        Rectangle {
+            visible: dragGhost.paths.length > 1
+            x: 34; y: 30
+            width: Math.max(18, countText.implicitWidth + 8); height: 18
+            radius: 9
+            color: "#2a6fc0"
+            border.color: "white"
+            VText { id: countText; anchors.centerIn: parent; text: dragGhost.paths.length; color: "white"; font.pixelSize: Theme.fontSizeSmall }
+        }
+        Rectangle {
+            visible: dragGhost.copy
+            x: 34; y: 4
+            width: 16; height: 16; radius: 3
+            color: "white"; border.color: "#7a8ea6"
+            VText { anchors.centerIn: parent; text: "+"; font.bold: true; color: "#1e5fb3" }
+        }
+    }
+    function dragMove(filePath, item, m) {
+        const g = item.mapToItem(Shell.root, m.x, m.y)
+        if (!dragging) {
+            if (Math.abs(g.x - pressPos.x) + Math.abs(g.y - pressPos.y) < 8)
+                return
+            if (renaming.length) return
+            dragPaths = selected[filePath] ? selectedPaths() : [filePath]
+            dragging = true
+        }
+        dragGhost.copy = (m.modifiers & Qt.ControlModifier) !== 0
+        dragGhost.x = g.x - dragGhost.Drag.hotSpot.x
+        dragGhost.y = g.y - dragGhost.Drag.hotSpot.y
+    }
+    function dragEnd() {
+        if (!dragging) return false
+        dragGhost.Drag.drop()
+        dragging = false
+        dragPaths = []
+        return true
+    }
+    // Drop handling shared by folders, the view background and the tree.
+    function canDropOn(target, src) {
+        if (!src || !src.paths || src.paths.length === 0 || target.length === 0 || target.indexOf("::") === 0)
+            return false
+        return !src.paths.some(p => p === target || target.indexOf(p + "/") === 0)
+    }
+    function dropOn(target, src) {
+        if (!canDropOn(target, src)) return false
+        const paths = src.paths.slice()
+        const ok = target === Files.trash ? Files.moveToTrash(paths) : Files.transfer(paths, target, src.copy)
+        refresh()
+        return ok
+    }
 
     // ================================================================ logic
     function libraryFor(p) {
@@ -1015,7 +1090,7 @@ FocusScope {
                     readonly property real indent: 4 + (modelData.depth || 0) * 16
                     readonly property bool act: ex.frame ? ex.frame.active : true
                     Rectangle {
-                        visible: !row.gap && (row.here || rowMouse.containsMouse)
+                        visible: !row.gap && (row.here || rowMouse.containsMouse || rowDrop.containsDrag)
                         x: 2; width: parent.width - 4; height: parent.height
                         radius: 2
                         border.color: row.here ? (row.act ? "#84acdd" : "#d9d9d9") : "#b8d6fb"
@@ -1023,6 +1098,14 @@ FocusScope {
                             GradientStop { position: 0; color: row.here ? (row.act ? "#e2eefc" : "#f8f8f8") : "#f8fbfe" }
                             GradientStop { position: 1; color: row.here ? (row.act ? "#c6dff9" : "#e5e5e5") : "#e8f2fd" }
                         }
+                    }
+                    DropArea {
+                        id: rowDrop
+                        anchors.fill: parent
+                        enabled: !row.gap && row.modelData.path.indexOf("::") !== 0
+                        keys: ["vitrum-files"]
+                        onEntered: (d) => { if (!ex.canDropOn(row.modelData.path, d.source)) d.accepted = false }
+                        onDropped: (d) => { if (ex.dropOn(row.modelData.path, d.source)) d.accept() }
                     }
                     MouseArea {
                         id: rowMouse
@@ -1168,6 +1251,19 @@ FocusScope {
                 y: libHeader.height
                 width: parent.width
                 height: parent.height - y
+
+                // Dropping on empty space moves files into this folder
+                DropArea {
+                    anchors.fill: parent
+                    enabled: !ex.virtualView
+                    keys: ["vitrum-files"]
+                    onEntered: (d) => {
+                        const src = d.source
+                        if (!ex.canDropOn(ex.location, src) || src.paths.every(p => Files.parentDir(p) === ex.location))
+                            d.accepted = false
+                    }
+                    onDropped: (d) => { if (ex.dropOn(ex.location, d.source)) d.accept() }
+                }
 
                 // Rubber-band selection on empty space
                 MouseArea {
@@ -1679,6 +1775,7 @@ FocusScope {
     function itemPressed(index, filePath, m, item) {
         ex.forceActiveFocus()
         renaming = ""
+        pressPos = item.mapToItem(Shell.root, m.x, m.y)
         if (m.button === Qt.RightButton) {
             if (!selected[filePath]) { selectOnly(filePath); anchor = index }
             current = index
@@ -1744,7 +1841,7 @@ FocusScope {
         height: ex.spec.h - (big ? 4 : 0)
         property int iconRev: 0
         Connections { target: Compat; function onIconReady(exe, url) { if (exe === gi.filePath) gi.iconRev++ } }
-        SelectionBack { anchors.fill: parent; anchors.margins: 1; sel: gi.sel; hot: giMouse.containsMouse }
+        SelectionBack { anchors.fill: parent; anchors.margins: 1; sel: gi.sel || giDrop.containsDrag; hot: giMouse.containsMouse && !ex.dragging }
         Rectangle {
             visible: ex.current === gi.index && ex.activeFocus && !gi.sel
             anchors.fill: parent; anchors.margins: 1; radius: 3
@@ -1805,8 +1902,19 @@ FocusScope {
             anchors.fill: parent
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            preventStealing: true
             onPressed: (m) => ex.itemPressed(gi.index, gi.filePath, m, giMouse)
+            onPositionChanged: (m) => { if (pressed && (m.buttons & Qt.LeftButton)) ex.dragMove(gi.filePath, giMouse, m) }
+            onReleased: ex.dragEnd()
             onDoubleClicked: (m) => { if (m.button === Qt.LeftButton) ex.open(gi.filePath) }
+        }
+        DropArea {
+            id: giDrop
+            anchors.fill: parent
+            enabled: gi.isDir
+            keys: ["vitrum-files"]
+            onEntered: (d) => { if (!ex.canDropOn(gi.filePath, d.source)) d.accepted = false }
+            onDropped: (d) => { if (ex.dropOn(gi.filePath, d.source)) d.accept() }
         }
         RenameField {
             target: gi.filePath
@@ -1842,8 +1950,8 @@ FocusScope {
             x: ri.content ? 2 : 4
             width: ri.content ? parent.width - 4 : 6 + ex.colName + (ex.searchMode ? ex.colFolder : 0) + ex.colDate + ex.colType + ex.colSize - 4
             height: parent.height - 1
-            sel: ri.sel
-            hot: riMouse.containsMouse
+            sel: ri.sel || riDrop.containsDrag
+            hot: riMouse.containsMouse && !ex.dragging
         }
         Rectangle { visible: ri.content; anchors.bottom: parent.bottom; x: 6; width: parent.width - 12; height: 1; color: "#e8edf3" }
         AppIcon {
@@ -1900,8 +2008,19 @@ FocusScope {
             anchors.fill: parent
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            preventStealing: true
             onPressed: (m) => ex.itemPressed(ri.index, ri.filePath, m, riMouse)
+            onPositionChanged: (m) => { if (pressed && (m.buttons & Qt.LeftButton)) ex.dragMove(ri.filePath, riMouse, m) }
+            onReleased: ex.dragEnd()
             onDoubleClicked: (m) => { if (m.button === Qt.LeftButton) ex.open(ri.filePath) }
+        }
+        DropArea {
+            id: riDrop
+            anchors.fill: parent
+            enabled: ri.isDir
+            keys: ["vitrum-files"]
+            onEntered: (d) => { if (!ex.canDropOn(ri.filePath, d.source)) d.accepted = false }
+            onDropped: (d) => { if (ex.dropOn(ri.filePath, d.source)) d.accept() }
         }
         RenameField {
             target: ri.filePath

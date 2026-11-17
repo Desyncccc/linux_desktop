@@ -56,6 +56,8 @@ public:
     Q_INVOKABLE void copy(const QStringList &paths);
     Q_INVOKABLE void cut(const QStringList &paths);
     Q_INVOKABLE bool paste(const QString &targetDir);
+    // Drag and drop: move (or copy) files into a folder.
+    Q_INVOKABLE bool transfer(const QStringList &paths, const QString &targetDir, bool copy = false);
     Q_INVOKABLE QVariantList volumes() const;
     Q_INVOKABLE QVariantMap info(const QString &path) const;
     // .desktop launcher on the desktop: returns {name, icon} or {}.
@@ -78,6 +80,7 @@ Q_SIGNALS:
 
 private:
     explicit Files(QObject *parent = nullptr);
+    bool transferFiles(const QStringList &sources, const QString &targetDir, bool copy);
     QStringList m_clipboard;
     bool m_cut = false;
 };

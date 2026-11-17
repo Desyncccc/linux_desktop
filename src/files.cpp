@@ -354,26 +354,47 @@ bool Files::paste(const QString &targetDir)
 {
     if (m_clipboard.isEmpty() || !QFileInfo(targetDir).isDir())
         return false;
+    const bool ok = transferFiles(m_clipboard, targetDir, !m_cut);
+    if (m_cut) {
+        m_clipboard.clear();
+        Q_EMIT clipboardChanged();
+    }
+    return ok;
+}
+
+bool Files::transfer(const QStringList &paths, const QString &targetDir, bool copy)
+{
+    if (paths.isEmpty() || !QFileInfo(targetDir).isDir())
+        return false;
+    // Never move a folder into itself.
+    const QString target = QFileInfo(targetDir).absoluteFilePath();
+    for (const QString &p : paths) {
+        const QString a = QFileInfo(p).absoluteFilePath();
+        if (target == a || target.startsWith(a + QLatin1Char('/')))
+            return false;
+    }
+    return transferFiles(paths, targetDir, copy);
+}
+
+bool Files::transferFiles(const QStringList &sources, const QString &targetDir, bool copy)
+{
+    const bool cut = !copy;
     bool ok = true;
-    for (const QString &src : std::as_const(m_clipboard)) {
+    for (const QString &src : sources) {
         const QString name = QFileInfo(src).fileName();
         QString dst = targetDir + QLatin1Char('/') + name;
-        if (m_cut && QFileInfo(src).absolutePath() == QFileInfo(targetDir).absoluteFilePath())
+        if (cut && QFileInfo(src).absolutePath() == QFileInfo(targetDir).absoluteFilePath())
             continue;
         if (QFileInfo::exists(dst))
-            dst = uniqueName(targetDir, m_cut ? name : QFileInfo(name).completeBaseName() + QStringLiteral(" - Copy")
+            dst = uniqueName(targetDir, cut ? name : QFileInfo(name).completeBaseName() + QStringLiteral(" - Copy")
                                                           + (QFileInfo(name).suffix().isEmpty() ? QString() : QLatin1Char('.') + QFileInfo(name).suffix()));
-        if (m_cut) {
+        if (cut) {
             if (!QFile::rename(src, dst)) {
                 ok = copyRecursive(src, dst) && (QFileInfo(src).isDir() ? QDir(src).removeRecursively() : QFile::remove(src)) && ok;
             }
         } else {
             ok = copyRecursive(src, dst) && ok;
         }
-    }
-    if (m_cut) {
-        m_clipboard.clear();
-        Q_EMIT clipboardChanged();
     }
     Q_EMIT changed(targetDir);
     return ok;
