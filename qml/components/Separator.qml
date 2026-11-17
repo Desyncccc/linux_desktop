@@ -1,9 +1,10 @@
 import QtQuick
+import Vitrum
 
 Item {
     property bool vertical: false
-    property color dark: "#d5dfe5"
-    property color light: "#ffffff"
+    property color dark: Theme.c("#d5dfe5")
+    property color light: Theme.c("#ffffff")
     implicitWidth: vertical ? 2 : 100
     implicitHeight: vertical ? 100 : 2
     Rectangle { width: parent.vertical ? 1 : parent.width; height: parent.vertical ? parent.height : 1; color: parent.dark }

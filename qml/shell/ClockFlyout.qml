@@ -20,12 +20,12 @@ Flyout {
         text: Qt.formatTime(fly.now, Prefs.clock24h ? "HH:mm:ss" : "h:mm:ss AP")
         font.pixelSize: 30
         font.weight: Font.Light
-        color: "#1e3287"
+        color: Theme.c("#1e3287")
     }
     VText {
         x: 18; y: 54
         text: Qt.formatDate(fly.now, "dddd, MMMM d, yyyy")
-        color: "#1e3287"
+        color: Theme.c("#1e3287")
     }
     Separator { x: 12; y: 78; width: parent.width - 24 }
 
@@ -40,13 +40,13 @@ Flyout {
         }
         HoverItem {
             width: 24; height: 24
-            VText { anchors.centerIn: parent; text: "◀"; color: "#4a6fa5" }
+            VText { anchors.centerIn: parent; text: "◀"; color: Theme.c("#4a6fa5") }
             onClicked: { if (fly.viewMonth === 0) { fly.viewMonth = 11; fly.viewYear-- } else fly.viewMonth-- }
         }
         HoverItem {
             anchors.right: parent.right
             width: 24; height: 24
-            VText { anchors.centerIn: parent; text: "▶"; color: "#4a6fa5" }
+            VText { anchors.centerIn: parent; text: "▶"; color: Theme.c("#4a6fa5") }
             onClicked: { if (fly.viewMonth === 11) { fly.viewMonth = 0; fly.viewYear++ } else fly.viewMonth++ }
         }
     }
@@ -80,8 +80,8 @@ Flyout {
                 Rectangle {
                     anchors.fill: parent; anchors.margins: 1
                     visible: day.today
-                    color: "#dcebfc"
-                    border.color: "#3d7bad"
+                    color: Theme.c("#dcebfc")
+                    border.color: Theme.c("#3d7bad")
                     radius: 2
                 }
                 VText {

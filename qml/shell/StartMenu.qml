@@ -82,7 +82,7 @@ Item {
     RectangularGlow {
         anchors.fill: frame
         glowRadius: 12; spread: 0.1; cornerRadius: 18
-        color: "#90000000"
+        color: Theme.c("#90000000")
     }
     GlassPanel {
         id: frame
@@ -100,7 +100,7 @@ Item {
         width: 250
         height: parent.height - 18
         radius: 4
-        color: Qt.rgba(1, 1, 1, 0.97)
+        color: Theme.dark ? Qt.rgba(0.12, 0.125, 0.135, 0.97) : Qt.rgba(1, 1, 1, 0.97)
         border.color: Qt.rgba(0, 0, 0, 0.55)
 
         // Pinned + frequent
@@ -195,7 +195,7 @@ Item {
                     x: 6; height: 22
                     verticalAlignment: Text.AlignVCenter
                     text: "Programs (" + menu.results.length + ")"
-                    color: "#1e3287"
+                    color: Theme.c("#1e3287")
                     font.bold: true
                 }
                 Repeater {
@@ -217,7 +217,7 @@ Item {
                     x: 6; height: 24
                     verticalAlignment: Text.AlignBottom
                     text: "Settings (" + menu.settingsResults.length + ")"
-                    color: "#1e3287"
+                    color: Theme.c("#1e3287")
                     font.bold: true
                 }
                 Repeater {
@@ -266,7 +266,7 @@ Item {
                 source: Theme.icon("chevron-right")
                 width: 14; height: 14
                 layer.enabled: true
-                layer.effect: ColorOverlay { color: "#2b5ea8" }
+                layer.effect: ColorOverlay { color: Theme.c("#2b5ea8") }
             }
             onClicked: {
                 if (menu.query.length > 0)
@@ -327,8 +327,8 @@ Item {
                     radius: 3
                     clip: true
                     gradient: Gradient {
-                        GradientStop { position: 0; color: "#8fc8f0" }
-                        GradientStop { position: 1; color: "#2d6db5" }
+                        GradientStop { position: 0; color: Theme.c("#8fc8f0") }
+                        GradientStop { position: 1; color: Theme.c("#2d6db5") }
                     }
                     Image {
                         anchors.fill: parent
@@ -366,13 +366,13 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - 16
                 text: link.text
-                color: "white"
+                color: Theme.c("white")
                 elide: Text.ElideRight
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize
                 font.bold: link.bold
                 style: Text.Raised
-                styleColor: "#a0000000"
+                styleColor: Theme.c("#a0000000")
                 renderType: Text.NativeRendering
             }
         }
@@ -412,9 +412,9 @@ Item {
                 radius: 3
                 border.color: Qt.rgba(0, 0, 0, 0.7)
                 gradient: Gradient {
-                    GradientStop { position: 0; color: ppMouse.containsMouse ? "#f7b8a8" : Qt.rgba(1, 1, 1, 0.35) }
-                    GradientStop { position: 0.5; color: ppMouse.containsMouse ? "#e0533a" : Qt.rgba(1, 1, 1, 0.12) }
-                    GradientStop { position: 1; color: ppMouse.containsMouse ? "#b8321c" : Qt.rgba(1, 1, 1, 0.06) }
+                    GradientStop { position: 0; color: ppMouse.containsMouse ? Theme.c("#f7b8a8") : Qt.rgba(1, 1, 1, 0.35) }
+                    GradientStop { position: 0.5; color: ppMouse.containsMouse ? Theme.c("#e0533a") : Qt.rgba(1, 1, 1, 0.12) }
+                    GradientStop { position: 1; color: ppMouse.containsMouse ? Theme.c("#b8321c") : Qt.rgba(1, 1, 1, 0.06) }
                 }
                 Rectangle { anchors.fill: parent; anchors.margins: 1; radius: 2; color: "transparent"; border.color: Qt.rgba(1, 1, 1, 0.35) }
             }
@@ -423,11 +423,11 @@ Item {
                 visible: pp.text.length > 0
                 anchors.centerIn: parent
                 text: pp.text
-                color: "white"
+                color: Theme.c("white")
                 font.family: Theme.font
                 font.pixelSize: Theme.fontSize
                 style: Text.Raised
-                styleColor: "#90000000"
+                styleColor: Theme.c("#90000000")
                 renderType: Text.NativeRendering
             }
             Image {

@@ -14,10 +14,10 @@ FocusScope {
         spacing: -1
         Rectangle {
             width: 90; height: 24
-            color: "white"
-            border.color: "#898c95"
+            color: Theme.c("white")
+            border.color: Theme.c("#898c95")
             VText { anchors.centerIn: parent; text: "Applications" }
-            Rectangle { anchors.bottom: parent.bottom; x: 1; width: parent.width - 2; height: 1; color: "white" }
+            Rectangle { anchors.bottom: parent.bottom; x: 1; width: parent.width - 2; height: 1; color: Theme.c("white") }
         }
     }
     Rectangle {
@@ -25,17 +25,17 @@ FocusScope {
         x: 8; y: 31
         width: parent.width - 16
         height: parent.height - y - 52
-        color: "white"
-        border.color: "#898c95"
+        color: Theme.c("white")
+        border.color: Theme.c("#898c95")
         Rectangle {
             id: hdr
             x: 1; y: 1
             width: parent.width - 2; height: 24
             gradient: Gradient {
-                GradientStop { position: 0; color: "#ffffff" }
-                GradientStop { position: 1; color: "#f1f2f4" }
+                GradientStop { position: 0; color: Theme.c("#ffffff") }
+                GradientStop { position: 1; color: Theme.c("#f1f2f4") }
             }
-            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: "#d5d5d5" }
+            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.c("#d5d5d5") }
             VText { x: 8; anchors.verticalCenter: parent.verticalCenter; text: "Task" }
             VText { x: parent.width - 100; anchors.verticalCenter: parent.verticalCenter; text: "Status" }
         }

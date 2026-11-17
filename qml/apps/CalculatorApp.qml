@@ -206,8 +206,8 @@ FocusScope {
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0; color: "#e3ebf6" }
-            GradientStop { position: 1; color: "#d2deee" }
+            GradientStop { position: 0; color: Theme.c("#e3ebf6") }
+            GradientStop { position: 1; color: Theme.c("#d2deee") }
         }
     }
 
@@ -267,11 +267,11 @@ FocusScope {
         width: calc.width - 2 * calc.margin
         height: calc.displayH
         radius: 3
-        border.color: "#8b9fbd"
+        border.color: Theme.c("#8b9fbd")
         gradient: Gradient {
-            GradientStop { position: 0; color: "#f9fbfe" }
-            GradientStop { position: 0.55; color: "#edf3fb" }
-            GradientStop { position: 1; color: "#dbe6f4" }
+            GradientStop { position: 0; color: Theme.c("#f9fbfe") }
+            GradientStop { position: 0.55; color: Theme.c("#edf3fb") }
+            GradientStop { position: 1; color: Theme.c("#dbe6f4") }
         }
         Rectangle { // inner highlight
             anchors.fill: parent
@@ -307,7 +307,7 @@ FocusScope {
                         horizontalAlignment: Text.AlignRight
                         elide: Text.ElideLeft
                         text: hrow.modelData.expr
-                        color: "#4b5a6e"
+                        color: Theme.c("#4b5a6e")
                         font.pixelSize: Theme.fontSizeSmall
                     }
                     VText {
@@ -323,7 +323,7 @@ FocusScope {
                 anchors.centerIn: parent
                 visible: eng.history.length === 0
                 text: "There's no history yet"
-                color: "#7d8899"
+                color: Theme.c("#7d8899")
                 font.italic: true
             }
         }
@@ -331,7 +331,7 @@ FocusScope {
             visible: calc.showHistory
             x: 6; y: calc.historyH - 3
             width: parent.width - 12; height: 1
-            color: "#a9b9d0"
+            color: Theme.c("#a9b9d0")
         }
 
         Item {
@@ -347,14 +347,14 @@ FocusScope {
                 horizontalAlignment: Text.AlignRight
                 elide: Text.ElideLeft
                 text: eng.expression
-                color: "#56637a"
+                color: Theme.c("#56637a")
                 font.pixelSize: Theme.fontSizeSmall
             }
             VText {
                 x: 6; y: 5
                 visible: eng.parenDepth > 0
                 text: "(=" + eng.parenDepth
-                color: "#56637a"
+                color: Theme.c("#56637a")
                 font.pixelSize: Theme.fontSizeSmall
             }
             VText {
@@ -363,7 +363,7 @@ FocusScope {
                 anchors.bottomMargin: 8
                 visible: eng.hasMemory
                 text: "M"
-                color: "#2c3a4f"
+                color: Theme.c("#2c3a4f")
                 font.pixelSize: Theme.fontSize
             }
             Text {
@@ -379,7 +379,7 @@ FocusScope {
                 font.pixelSize: eng.error ? 16 : 24
                 fontSizeMode: Text.HorizontalFit
                 minimumPixelSize: 11
-                color: "#101820"
+                color: Theme.c("#101820")
                 renderType: Text.NativeRendering
             }
         }
@@ -440,12 +440,12 @@ FocusScope {
             Rectangle {
                 anchors.fill: parent
                 radius: 3
-                border.color: key.down ? "#a0742a" : key.hot ? "#d8a443" : key.toggled ? "#8a7038" : "#8a9bb5"
+                border.color: Theme.c(key.down ? "#a0742a" : key.hot ? "#d8a443" : key.toggled ? "#8a7038" : "#8a9bb5")
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: key.down ? "#f9d98f" : key.hot ? "#fff9e3" : key.toggled ? "#f3dfae" : "#fbfcfe" }
-                    GradientStop { position: 0.45; color: key.down ? "#f4c66a" : key.hot ? "#ffeab0" : key.toggled ? "#ecd08f" : "#eef3f9" }
-                    GradientStop { position: 0.5; color: key.down ? "#eeb247" : key.hot ? "#ffd97a" : key.toggled ? "#e3bf6c" : "#dfe7f2" }
-                    GradientStop { position: 1.0; color: key.down ? "#f6cd74" : key.hot ? "#ffe7a8" : key.toggled ? "#efd497" : "#e8eef6" }
+                    GradientStop { position: 0.0; color: Theme.c(key.down ? "#f9d98f" : key.hot ? "#fff9e3" : key.toggled ? "#f3dfae" : "#fbfcfe") }
+                    GradientStop { position: 0.45; color: Theme.c(key.down ? "#f4c66a" : key.hot ? "#ffeab0" : key.toggled ? "#ecd08f" : "#eef3f9") }
+                    GradientStop { position: 0.5; color: Theme.c(key.down ? "#eeb247" : key.hot ? "#ffd97a" : key.toggled ? "#e3bf6c" : "#dfe7f2") }
+                    GradientStop { position: 1.0; color: Theme.c(key.down ? "#f6cd74" : key.hot ? "#ffe7a8" : key.toggled ? "#efd497" : "#e8eef6") }
                 }
                 Rectangle {
                     anchors.fill: parent
@@ -461,7 +461,7 @@ FocusScope {
                 text: eng.inv ? key.modelData.invLabel : key.modelData.label
                 font.family: Theme.font
                 font.pixelSize: text.length > 3 ? 11 : (text.length > 1 ? 12 : 14)
-                color: "#15233a"
+                color: Theme.c("#15233a")
                 renderType: Text.NativeRendering
             }
             MouseArea {
@@ -484,7 +484,7 @@ FocusScope {
         height: calc.keyH + 4
         radius: 3
         color: Qt.rgba(1, 1, 1, 0.35)
-        border.color: "#9fb1cb"
+        border.color: Theme.c("#9fb1cb")
         Row {
             anchors.centerIn: parent
             spacing: 10
@@ -499,18 +499,18 @@ FocusScope {
                     Rectangle {
                         width: 13; height: 13; radius: 6.5
                         anchors.verticalCenter: parent.verticalCenter
-                        border.color: rma.containsMouse ? "#3c7fb1" : "#8e8f8f"
+                        border.color: rma.containsMouse ? Theme.c("#3c7fb1") : Theme.c("#8e8f8f")
                         gradient: Gradient {
-                            GradientStop { position: 0; color: rma.containsMouse ? "#def9fa" : "#ebebeb" }
-                            GradientStop { position: 1; color: rma.containsMouse ? "#a8dbf9" : "#ffffff" }
+                            GradientStop { position: 0; color: rma.containsMouse ? Theme.c("#def9fa") : Theme.c("#ebebeb") }
+                            GradientStop { position: 1; color: rma.containsMouse ? Theme.c("#a8dbf9") : Theme.c("#ffffff") }
                         }
                         Rectangle {
                             visible: radio.on
                             anchors.centerIn: parent
                             width: 7; height: 7; radius: 3.5
                             gradient: Gradient {
-                                GradientStop { position: 0; color: "#7ab4e8" }
-                                GradientStop { position: 1; color: "#1c5aa6" }
+                                GradientStop { position: 0; color: Theme.c("#7ab4e8") }
+                                GradientStop { position: 1; color: Theme.c("#1c5aa6") }
                             }
                         }
                     }

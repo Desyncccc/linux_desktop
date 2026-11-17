@@ -81,9 +81,9 @@ FocusScope {
     property real colSize: 86
     property real colFolder: 220
 
-    readonly property color headingBlue: "#1e3287"
-    readonly property color linkBlue: "#0066cc"
-    readonly property color cmdText: "#1e395b"
+    readonly property color headingBlue: Theme.c("#1e3287")
+    readonly property color linkBlue: Theme.c("#0066cc")
+    readonly property color cmdText: Theme.c("#1e395b")
 
     Component.onCompleted: navigate(path.length > 0 ? path : Files.home, true)
     onPathChanged: if (path.length > 0 && path !== location) navigate(path, true)
@@ -124,16 +124,16 @@ FocusScope {
             x: 34; y: 30
             width: Math.max(18, countText.implicitWidth + 8); height: 18
             radius: 9
-            color: "#2a6fc0"
-            border.color: "white"
-            VText { id: countText; anchors.centerIn: parent; text: dragGhost.paths.length; color: "white"; font.pixelSize: Theme.fontSizeSmall }
+            color: Theme.c("#2a6fc0")
+            border.color: Theme.c("white")
+            VText { id: countText; anchors.centerIn: parent; text: dragGhost.paths.length; color: Theme.c("white"); font.pixelSize: Theme.fontSizeSmall }
         }
         Rectangle {
             visible: dragGhost.copy
             x: 34; y: 4
             width: 16; height: 16; radius: 3
-            color: "white"; border.color: "#7a8ea6"
-            VText { anchors.centerIn: parent; text: "+"; font.bold: true; color: "#1e5fb3" }
+            color: Theme.c("white"); border.color: Theme.c("#7a8ea6")
+            VText { anchors.centerIn: parent; text: "+"; font.bold: true; color: Theme.c("#1e5fb3") }
         }
     }
     function dragMove(filePath, item, m) {
@@ -596,7 +596,7 @@ FocusScope {
     component Chevron: Canvas {
         // Small solid triangle pointing down (or right when `right`).
         property bool pointRight: false
-        property color color: "#3b3b3b"
+        property color color: Theme.c("#3b3b3b")
         width: 7; height: 7
         onColorChanged: requestPaint()
         onPointRightChanged: requestPaint()
@@ -628,11 +628,11 @@ FocusScope {
             anchors.fill: parent
             radius: 3
             visible: cb.on && (cbMouse.containsMouse || cb.checked)
-            border.color: "#7da2ce"
+            border.color: Theme.c("#7da2ce")
             gradient: Gradient {
-                GradientStop { position: 0; color: cbMouse.pressed ? "#c8dbf1" : "#fbfdff" }
-                GradientStop { position: 0.5; color: cbMouse.pressed ? "#bfd5ef" : "#e6f0fb" }
-                GradientStop { position: 1; color: cbMouse.pressed ? "#cfe0f3" : "#d5e5f8" }
+                GradientStop { position: 0; color: cbMouse.pressed ? Theme.c("#c8dbf1") : Theme.c("#fbfdff") }
+                GradientStop { position: 0.5; color: cbMouse.pressed ? Theme.c("#bfd5ef") : Theme.c("#e6f0fb") }
+                GradientStop { position: 1; color: cbMouse.pressed ? Theme.c("#cfe0f3") : Theme.c("#d5e5f8") }
             }
             Rectangle { anchors.fill: parent; anchors.margins: 1; radius: 2; color: "transparent"; border.color: Qt.rgba(1, 1, 1, 0.7) }
         }
@@ -658,12 +658,12 @@ FocusScope {
             anchors.fill: parent
             radius: width / 2
             opacity: tb.on ? 1 : 0.6
-            border.color: tb.on ? "#1c3e6e" : "#5b6e88"
+            border.color: tb.on ? Theme.c("#1c3e6e") : Theme.c("#5b6e88")
             gradient: Gradient {
-                GradientStop { position: 0; color: !tb.on ? "#d8e2ee" : tbMouse.pressed ? "#7fb2e5" : tbMouse.containsMouse ? "#d0ecff" : "#a9d0f5" }
-                GradientStop { position: 0.48; color: !tb.on ? "#a5b6cb" : tbMouse.pressed ? "#1f5ea8" : tbMouse.containsMouse ? "#4fa6f0" : "#3f87d6" }
-                GradientStop { position: 0.52; color: !tb.on ? "#8fa3bb" : tbMouse.pressed ? "#174e93" : tbMouse.containsMouse ? "#2a8ae6" : "#2a6fc0" }
-                GradientStop { position: 1; color: !tb.on ? "#b7c5d6" : tbMouse.pressed ? "#3f86d0" : tbMouse.containsMouse ? "#86d0ff" : "#5aa5e8" }
+                GradientStop { position: 0; color: Theme.c(!tb.on ? "#d8e2ee" : tbMouse.pressed ? "#7fb2e5" : tbMouse.containsMouse ? "#d0ecff" : "#a9d0f5") }
+                GradientStop { position: 0.48; color: Theme.c(!tb.on ? "#a5b6cb" : tbMouse.pressed ? "#1f5ea8" : tbMouse.containsMouse ? "#4fa6f0" : "#3f87d6") }
+                GradientStop { position: 0.52; color: Theme.c(!tb.on ? "#8fa3bb" : tbMouse.pressed ? "#174e93" : tbMouse.containsMouse ? "#2a8ae6" : "#2a6fc0") }
+                GradientStop { position: 1; color: Theme.c(!tb.on ? "#b7c5d6" : tbMouse.pressed ? "#3f86d0" : tbMouse.containsMouse ? "#86d0ff" : "#5aa5e8") }
             }
             Rectangle { anchors.fill: parent; anchors.margins: 1; radius: width / 2; color: "transparent"; border.color: Qt.rgba(1, 1, 1, 0.45) }
             Canvas {
@@ -676,7 +676,7 @@ FocusScope {
                     c.reset()
                     c.save()
                     if (fwd) { c.translate(14, 0); c.scale(-1, 1) }
-                    c.fillStyle = "white"
+                    c.fillStyle = Theme.c("white")
                     c.strokeStyle = Qt.rgba(0, 0.1, 0.3, 0.5)
                     c.lineWidth = 0.8
                     c.beginPath()
@@ -729,7 +729,7 @@ FocusScope {
                     TravelButton { forwardDir: true; on: ex.historyIndex < ex.history.length - 1; onClicked: ex.forward() }
                     Item {
                         width: 18; height: 27
-                        Chevron { anchors.centerIn: parent; color: "#1c2c44" }
+                        Chevron { anchors.centerIn: parent; color: Theme.c("#1c2c44") }
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -754,8 +754,8 @@ FocusScope {
                 width: parent.width - x - searchBox.width - 12
                 height: 24
                 anchors.verticalCenter: parent.verticalCenter
-                color: Qt.rgba(1, 1, 1, 0.94)
-                border.color: addrHover.containsMouse || editing ? "#3c7fb1" : Qt.rgba(0, 0, 0, 0.42)
+                color: Theme.dark ? Qt.rgba(0.11, 0.12, 0.13, 0.92) : Qt.rgba(1, 1, 1, 0.94)
+                border.color: addrHover.containsMouse || editing ? Theme.c("#3c7fb1") : Qt.rgba(0, 0, 0, 0.42)
                 radius: 1
                 clip: true
                 onEditingChanged: if (editing) {
@@ -774,8 +774,8 @@ FocusScope {
                     property real progress: 0
                     NumberAnimation on progress { running: dir.searching; from: 0.05; to: 0.95; duration: 4000; loops: Animation.Infinite }
                     gradient: Gradient {
-                        GradientStop { position: 0; color: "#d7f5c8" }
-                        GradientStop { position: 1; color: "#a8e48f" }
+                        GradientStop { position: 0; color: Theme.c("#d7f5c8") }
+                        GradientStop { position: 1; color: Theme.c("#a8e48f") }
                     }
                 }
                 AppIcon { x: 4; anchors.verticalCenter: parent.verticalCenter; size: 16; name: ex.folderIcon(ex.location) }
@@ -789,9 +789,9 @@ FocusScope {
                     // Leading chevron: the top-level places (or the hidden part of a long path)
                     Item {
                         width: 15; height: parent.height
-                        Rectangle { anchors.fill: parent; anchors.margins: 2; visible: leadMouse.containsMouse; color: "#dceafc"; border.color: "#7da2ce"; radius: 1 }
-                        VText { visible: crumbRow.all.length > 5; anchors.centerIn: parent; text: "«"; color: "#1c2c44" }
-                        Chevron { visible: crumbRow.all.length <= 5; anchors.centerIn: parent; pointRight: true; color: "#1c2c44" }
+                        Rectangle { anchors.fill: parent; anchors.margins: 2; visible: leadMouse.containsMouse; color: Theme.c("#dceafc"); border.color: Theme.c("#7da2ce"); radius: 1 }
+                        VText { visible: crumbRow.all.length > 5; anchors.centerIn: parent; text: "«"; color: Theme.c("#1c2c44") }
+                        Chevron { visible: crumbRow.all.length <= 5; anchors.centerIn: parent; pointRight: true; color: Theme.c("#1c2c44") }
                         MouseArea {
                             id: leadMouse
                             anchors.fill: parent
@@ -817,13 +817,13 @@ FocusScope {
                                     anchors.fill: parent; anchors.topMargin: 2; anchors.bottomMargin: 2
                                     visible: crumbMouse.containsMouse || chevMouse.containsMouse
                                     radius: 1
-                                    border.color: "#7da2ce"
+                                    border.color: Theme.c("#7da2ce")
                                     gradient: Gradient {
-                                        GradientStop { position: 0; color: "#f3f8fe" }
-                                        GradientStop { position: 1; color: "#d4e6fb" }
+                                        GradientStop { position: 0; color: Theme.c("#f3f8fe") }
+                                        GradientStop { position: 1; color: Theme.c("#d4e6fb") }
                                     }
                                 }
-                                VText { id: crumbText; anchors.centerIn: parent; text: crumb.modelData.name; color: "#000000" }
+                                VText { id: crumbText; anchors.centerIn: parent; text: crumb.modelData.name; color: Theme.c("#000000") }
                                 MouseArea { id: crumbMouse; anchors.fill: parent; hoverEnabled: true; onClicked: ex.navigate(crumb.modelData.path, true) }
                             }
                             Item {
@@ -832,10 +832,10 @@ FocusScope {
                                     anchors.fill: parent; anchors.topMargin: 2; anchors.bottomMargin: 2
                                     visible: crumbMouse.containsMouse || chevMouse.containsMouse
                                     radius: 1
-                                    border.color: "#7da2ce"
-                                    color: chevMouse.containsMouse ? "#d4e6fb" : "#eaf3fd"
+                                    border.color: Theme.c("#7da2ce")
+                                    color: chevMouse.containsMouse ? Theme.c("#d4e6fb") : Theme.c("#eaf3fd")
                                 }
-                                Chevron { anchors.centerIn: parent; pointRight: true; color: "#1c2c44" }
+                                Chevron { anchors.centerIn: parent; pointRight: true; color: Theme.c("#1c2c44") }
                                 MouseArea { id: chevMouse; anchors.fill: parent; hoverEnabled: true; onClicked: ex.crumbMenu(crumb.modelData.path, parent) }
                             }
                         }
@@ -863,7 +863,7 @@ FocusScope {
                     font.family: Theme.font
                     font.pixelSize: Theme.fontSize
                     selectByMouse: true
-                    selectionColor: "#3399ff"
+                    selectionColor: Theme.c("#3399ff")
                     clip: true
                     onAccepted: {
                         const raw = text.trim()
@@ -886,7 +886,7 @@ FocusScope {
                 Item {
                     anchors.right: refreshBtn.left
                     width: 18; height: parent.height
-                    Chevron { anchors.centerIn: parent; color: "#1c2c44" }
+                    Chevron { anchors.centerIn: parent; color: Theme.c("#1c2c44") }
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
@@ -907,14 +907,14 @@ FocusScope {
                     id: refreshBtn
                     anchors.right: parent.right
                     width: 24; height: parent.height
-                    Rectangle { width: 1; height: parent.height; color: "#c7d3e2" }
+                    Rectangle { width: 1; height: parent.height; color: Theme.c("#c7d3e2") }
                     Rectangle {
                         anchors.fill: parent; anchors.margins: 1; anchors.leftMargin: 2
                         visible: refMouse.containsMouse
-                        border.color: "#7da2ce"
+                        border.color: Theme.c("#7da2ce")
                         gradient: Gradient {
-                            GradientStop { position: 0; color: "#f3f8fe" }
-                            GradientStop { position: 1; color: "#cfe3fa" }
+                            GradientStop { position: 0; color: Theme.c("#f3f8fe") }
+                            GradientStop { position: 1; color: Theme.c("#cfe3fa") }
                         }
                     }
                     AppIcon { anchors.centerIn: parent; size: 16; name: address.editing ? Theme.icon("arrow-right") : Theme.icon("refresh-small") }
@@ -935,8 +935,8 @@ FocusScope {
                 anchors.verticalCenter: parent.verticalCenter
                 width: Math.max(150, Math.min(260, parent.width * 0.26))
                 height: 24
-                color: searchField.input.activeFocus ? "white" : Qt.rgba(1, 1, 1, 0.85)
-                border.color: searchField.input.activeFocus || searchHover.containsMouse ? "#3c7fb1" : Qt.rgba(0, 0, 0, 0.42)
+                color: searchField.input.activeFocus ? Theme.c("white") : (Theme.dark ? Qt.rgba(0.11, 0.12, 0.13, 0.85) : Qt.rgba(1, 1, 1, 0.85))
+                border.color: searchField.input.activeFocus || searchHover.containsMouse ? Theme.c("#3c7fb1") : Qt.rgba(0, 0, 0, 0.42)
                 radius: 1
                 MouseArea { id: searchHover; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
                 TextField7 {
@@ -969,10 +969,10 @@ FocusScope {
             width: parent.width
             height: visible ? 22 : 0
             gradient: Gradient {
-                GradientStop { position: 0; color: "#fbfcfe" }
-                GradientStop { position: 1; color: "#eef3fa" }
+                GradientStop { position: 0; color: Theme.c("#fbfcfe") }
+                GradientStop { position: 1; color: Theme.c("#eef3fa") }
             }
-            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: "#d5dfe9" }
+            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.c("#d5dfe9") }
             Row {
                 x: 2
                 height: parent.height
@@ -986,7 +986,7 @@ FocusScope {
                         Rectangle {
                             anchors.fill: parent; anchors.margins: 1
                             visible: mbMouse.containsMouse
-                            color: "#dceafc"; border.color: "#7da2ce"; radius: 2
+                            color: Theme.c("#dceafc"); border.color: Theme.c("#7da2ce"); radius: 2
                         }
                         VText { id: mbText; anchors.centerIn: parent; text: mbItem.modelData }
                         MouseArea {
@@ -1006,13 +1006,13 @@ FocusScope {
             width: parent.width
             height: 32
             gradient: Gradient {
-                GradientStop { position: 0; color: "#f6f9fd" }
-                GradientStop { position: 0.5; color: "#e8eff8" }
-                GradientStop { position: 0.51; color: "#dfe8f4" }
-                GradientStop { position: 1; color: "#dbe6f4" }
+                GradientStop { position: 0; color: Theme.c("#f6f9fd") }
+                GradientStop { position: 0.5; color: Theme.c("#e8eff8") }
+                GradientStop { position: 0.51; color: Theme.c("#dfe8f4") }
+                GradientStop { position: 1; color: Theme.c("#dbe6f4") }
             }
-            Rectangle { width: parent.width; height: 1; color: Qt.rgba(1, 1, 1, 0.9) }
-            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: "#a0afc3" }
+            Rectangle { width: parent.width; height: 1; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.06) : Qt.rgba(1, 1, 1, 0.9) }
+            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.c("#a0afc3") }
             readonly property var sel: ex.selectedPaths()
             readonly property string one: sel.length === 1 ? sel[0] : ""
             readonly property bool oneIsDir: one.length > 0 && Files.isDir(one)
@@ -1071,7 +1071,7 @@ FocusScope {
             visible: ex.navPaneShown
             width: visible ? ex.navWidth : 0
             height: parent.height
-            color: "white"
+            color: Theme.c("white")
             MouseArea { id: navHover; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
             ListView {
                 id: tree
@@ -1093,10 +1093,10 @@ FocusScope {
                         visible: !row.gap && (row.here || rowMouse.containsMouse || rowDrop.containsDrag)
                         x: 2; width: parent.width - 4; height: parent.height
                         radius: 2
-                        border.color: row.here ? (row.act ? "#84acdd" : "#d9d9d9") : "#b8d6fb"
+                        border.color: Theme.c(row.here ? (row.act ? "#84acdd" : "#d9d9d9") : "#b8d6fb")
                         gradient: Gradient {
-                            GradientStop { position: 0; color: row.here ? (row.act ? "#e2eefc" : "#f8f8f8") : "#f8fbfe" }
-                            GradientStop { position: 1; color: row.here ? (row.act ? "#c6dff9" : "#e5e5e5") : "#e8f2fd" }
+                            GradientStop { position: 0; color: Theme.c(row.here ? (row.act ? "#e2eefc" : "#f8f8f8") : "#f8fbfe") }
+                            GradientStop { position: 1; color: Theme.c(row.here ? (row.act ? "#c6dff9" : "#e5e5e5") : "#e8f2fd") }
                         }
                     }
                     DropArea {
@@ -1154,13 +1154,13 @@ FocusScope {
                             if (isOpen) {
                                 c.moveTo(7.5, 1.5); c.lineTo(7.5, 7.5); c.lineTo(1.5, 7.5)
                                 c.closePath()
-                                c.fillStyle = hot ? "#1c97ea" : "#595959"
-                                c.strokeStyle = hot ? "#1c97ea" : "#262626"
+                                c.fillStyle = hot ? Theme.c("#1c97ea") : Theme.c("#595959")
+                                c.strokeStyle = hot ? Theme.c("#1c97ea") : Theme.c("#262626")
                             } else {
                                 c.moveTo(2.5, 0.5); c.lineTo(6.5, 4.5); c.lineTo(2.5, 8.5)
                                 c.closePath()
-                                c.fillStyle = "white"
-                                c.strokeStyle = hot ? "#1c97ea" : "#a6a6a6"
+                                c.fillStyle = Theme.c("white")
+                                c.strokeStyle = hot ? Theme.c("#1c97ea") : Theme.c("#a6a6a6")
                             }
                             c.fill(); c.stroke()
                         }
@@ -1180,7 +1180,7 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         text: row.modelData.name || ""
                         elide: Text.ElideRight
-                        color: (row.modelData.depth || 0) === 0 && row.modelData.expandable ? ex.headingBlue : "#000000"
+                        color: (row.modelData.depth || 0) === 0 && row.modelData.expandable ? ex.headingBlue : Theme.text
                     }
                 }
                 ScrollIndicator7 { flickable: tree }
@@ -1191,7 +1191,7 @@ FocusScope {
             visible: ex.navPaneShown
             x: navPane.width - 1
             width: 1; height: parent.height
-            color: "#d6e5f5"
+            color: Theme.c("#d6e5f5")
             MouseArea {
                 x: -3; width: 7; height: parent.height
                 cursorShape: Qt.SplitHCursor
@@ -1207,7 +1207,7 @@ FocusScope {
             x: navPane.width
             width: parent.width - x - previewPane.width
             height: parent.height
-            color: "white"
+            color: Theme.c("white")
             clip: true
 
             // Library header
@@ -1240,8 +1240,8 @@ FocusScope {
                     anchors.bottom: parent.bottom; x: 10; width: parent.width - 20; height: 1
                     gradient: Gradient {
                         orientation: Gradient.Horizontal
-                        GradientStop { position: 0; color: "#d5e0ee" }
-                        GradientStop { position: 1; color: "#ffffff" }
+                        GradientStop { position: 0; color: Theme.c("#d5e0ee") }
+                        GradientStop { position: 1; color: Theme.c("#ffffff") }
                     }
                 }
             }
@@ -1349,9 +1349,9 @@ FocusScope {
                         x: -list.contentX
                         width: Math.max(parent.width, list.contentWidth)
                         height: visible ? 25 : 0
-                        color: "white"
+                        color: Theme.c("white")
                         z: 2
-                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: "#e5e5e5" }
+                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.c("#e5e5e5") }
                         Row {
                             x: 6
                             height: parent.height
@@ -1393,7 +1393,7 @@ FocusScope {
                     width: band.r.width
                     height: band.r.height
                     color: Qt.rgba(0.2, 0.6, 1, 0.22)
-                    border.color: "#3399ff"
+                    border.color: Theme.c("#3399ff")
                 }
 
                 VText {
@@ -1401,7 +1401,7 @@ FocusScope {
                     y: (ex.gridMode ? 14 : detailsHeader.height + 14)
                     visible: !ex.virtualView && dir.count === 0 && !dir.searching
                     text: ex.searchMode ? "No items match your search." : "This folder is empty."
-                    color: "#6d6d6d"
+                    color: Theme.c("#6d6d6d")
                 }
 
                 // Computer and Libraries
@@ -1477,8 +1477,8 @@ FocusScope {
             anchors.right: parent.right
             width: visible ? ex.previewWidth : 0
             height: parent.height
-            color: "white"
-            Rectangle { width: 1; height: parent.height; color: "#d6e5f5" }
+            color: Theme.c("white")
+            Rectangle { width: 1; height: parent.height; color: Theme.c("#d6e5f5") }
             MouseArea {
                 x: -3; width: 7; height: parent.height
                 cursorShape: Qt.SplitHCursor
@@ -1518,7 +1518,7 @@ FocusScope {
                 visible: !previewPane.isImg && !previewPane.isTxt
                 anchors.centerIn: parent
                 text: previewPane.file.length ? "No preview available." : "Select a file to preview."
-                color: "#6d6d6d"
+                color: Theme.c("#6d6d6d")
             }
         }
     }
@@ -1531,10 +1531,10 @@ FocusScope {
         width: parent.width
         height: visible ? 66 : 0
         gradient: Gradient {
-            GradientStop { position: 0; color: "#fafcfe" }
-            GradientStop { position: 1; color: "#e3ecf7" }
+            GradientStop { position: 0; color: Theme.c("#fafcfe") }
+            GradientStop { position: 1; color: Theme.c("#e3ecf7") }
         }
-        Rectangle { width: parent.width; height: 1; color: "#c5d4e6" }
+        Rectangle { width: parent.width; height: 1; color: Theme.c("#c5d4e6") }
         readonly property var sel: ex.selectedPaths()
         readonly property var vol: ex.computerView && sel.length === 1 ? ex.drives().find(v => v.path === sel[0]) : undefined
         readonly property var info: visible && sel.length === 1 && !vol && !ex.virtualView ? Files.info(sel[0]) : null
@@ -1623,7 +1623,7 @@ FocusScope {
                         width: parent.isLabel ? implicitWidth : parent.width
                         elide: Text.ElideRight
                         text: parent.isLabel ? parent.pair[0] : parent.pair[1]
-                        color: parent.isLabel ? "#5a6779" : "#1e1e1e"
+                        color: parent.isLabel ? Theme.c("#5a6779") : Theme.c("#1e1e1e")
                     }
                     UsageBar {
                         visible: parent.isBar
@@ -1643,8 +1643,8 @@ FocusScope {
         anchors.bottom: parent.bottom
         width: parent.width
         height: visible ? 22 : 0
-        color: "#f0f0f0"
-        Rectangle { width: parent.width; height: 1; color: "#d0d0d0" }
+        color: Theme.c("#f0f0f0")
+        Rectangle { width: parent.width; height: 1; color: Theme.c("#d0d0d0") }
         VText {
             x: 8
             anchors.verticalCenter: parent.verticalCenter
@@ -1669,17 +1669,17 @@ FocusScope {
         Rectangle {
             anchors.fill: parent
             visible: hcMouse.containsMouse
-            border.color: "#c0d8ef"
+            border.color: Theme.c("#c0d8ef")
             gradient: Gradient {
-                GradientStop { position: 0; color: "#f7fbff" }
-                GradientStop { position: 1; color: "#e3effc" }
+                GradientStop { position: 0; color: Theme.c("#f7fbff") }
+                GradientStop { position: 1; color: Theme.c("#e3effc") }
             }
         }
         Chevron {
             visible: hc.sorted
             anchors.horizontalCenter: parent.horizontalCenter
             y: 0
-            color: "#7a8ea6"
+            color: Theme.c("#7a8ea6")
             rotation: dir.sortDescending ? 0 : 180
         }
         VText {
@@ -1689,10 +1689,10 @@ FocusScope {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: hc.alignRight ? Text.AlignRight : Text.AlignLeft
             text: hc.title
-            color: "#4c607a"
+            color: Theme.c("#4c607a")
             elide: Text.ElideRight
         }
-        Rectangle { anchors.right: parent.right; width: 1; height: parent.height - 8; y: 4; color: "#e5e5e5" }
+        Rectangle { anchors.right: parent.right; width: 1; height: parent.height - 8; y: 4; color: Theme.c("#e5e5e5") }
         MouseArea {
             id: hcMouse
             anchors.fill: parent
@@ -1727,8 +1727,8 @@ FocusScope {
             height: 1
             gradient: Gradient {
                 orientation: Gradient.Horizontal
-                GradientStop { position: 0; color: "#b6c8e0" }
-                GradientStop { position: 1; color: "#ffffff" }
+                GradientStop { position: 0; color: Theme.c("#b6c8e0") }
+                GradientStop { position: 1; color: Theme.c("#ffffff") }
             }
         }
     }
@@ -1739,19 +1739,19 @@ FocusScope {
         property real free: 0
         readonly property real used: total > 0 ? 1 - free / total : 0
         readonly property bool full: used > 0.9
-        border.color: "#bcbcbc"
+        border.color: Theme.c("#bcbcbc")
         gradient: Gradient {
-            GradientStop { position: 0; color: "#f2f2f2" }
-            GradientStop { position: 1; color: "#e2e2e2" }
+            GradientStop { position: 0; color: Theme.c("#f2f2f2") }
+            GradientStop { position: 1; color: Theme.c("#e2e2e2") }
         }
         Rectangle {
             x: 1; y: 1
             height: parent.height - 2
             width: Math.max(0, (parent.width - 2) * ub.used)
             gradient: Gradient {
-                GradientStop { position: 0; color: ub.full ? "#ff8c7a" : "#68c3f5" }
-                GradientStop { position: 0.5; color: ub.full ? "#e2442d" : "#2b9ce8" }
-                GradientStop { position: 1; color: ub.full ? "#c9311c" : "#1c87d6" }
+                GradientStop { position: 0; color: ub.full ? Theme.c("#ff8c7a") : Theme.c("#68c3f5") }
+                GradientStop { position: 0.5; color: ub.full ? Theme.c("#e2442d") : Theme.c("#2b9ce8") }
+                GradientStop { position: 1; color: ub.full ? Theme.c("#c9311c") : Theme.c("#1c87d6") }
             }
         }
     }
@@ -1763,10 +1763,10 @@ FocusScope {
         readonly property bool act: ex.frame ? ex.frame.active : true
         radius: 3
         visible: sel || hot
-        border.color: sel ? (act ? (hot ? "#7da2ce" : "#84acdd") : "#d9d9d9") : "#b8d6fb"
+        border.color: Theme.c(sel ? (act ? (hot ? "#7da2ce" : "#84acdd") : "#d9d9d9") : "#b8d6fb")
         gradient: Gradient {
-            GradientStop { position: 0; color: sb.sel ? (sb.act ? (sb.hot ? "#dcebfc" : "#e2eefc") : "#f8f8f8") : "#fafbfd" }
-            GradientStop { position: 1; color: sb.sel ? (sb.act ? (sb.hot ? "#c1dcfc" : "#c6dff9") : "#e5e5e5") : "#ebf3fd" }
+            GradientStop { position: 0; color: Theme.c(sb.sel ? (sb.act ? (sb.hot ? "#dcebfc" : "#e2eefc") : "#f8f8f8") : "#fafbfd") }
+            GradientStop { position: 1; color: Theme.c(sb.sel ? (sb.act ? (sb.hot ? "#c1dcfc" : "#c6dff9") : "#e5e5e5") : "#ebf3fd") }
         }
         Rectangle { anchors.fill: parent; anchors.margins: 1; radius: 2; color: "transparent"; border.color: Qt.rgba(1, 1, 1, 0.55) }
     }
@@ -1845,7 +1845,7 @@ FocusScope {
         Rectangle {
             visible: ex.current === gi.index && ex.activeFocus && !gi.sel
             anchors.fill: parent; anchors.margins: 1; radius: 3
-            color: "transparent"; border.color: "#a8c6ea"
+            color: "transparent"; border.color: Theme.c("#a8c6ea")
         }
         Item {
             id: iconBox
@@ -1865,8 +1865,8 @@ FocusScope {
                 visible: gi.thumbnail && thumb.status === Image.Ready
                 anchors.centerIn: parent
                 width: thumb.paintedWidth + 6; height: thumb.paintedHeight + 6
-                color: "white"
-                border.color: "#c9d1db"
+                color: Theme.c("white")
+                border.color: Theme.c("#c9d1db")
             }
             Image {
                 id: thumb
@@ -1953,7 +1953,7 @@ FocusScope {
             sel: ri.sel || riDrop.containsDrag
             hot: riMouse.containsMouse && !ex.dragging
         }
-        Rectangle { visible: ri.content; anchors.bottom: parent.bottom; x: 6; width: parent.width - 12; height: 1; color: "#e8edf3" }
+        Rectangle { visible: ri.content; anchors.bottom: parent.bottom; x: 6; width: parent.width - 12; height: 1; color: Theme.c("#e8edf3") }
         AppIcon {
             x: 10
             anchors.verticalCenter: parent.verticalCenter
@@ -1979,10 +1979,10 @@ FocusScope {
             height: parent.height
             VText { width: ex.colName - 30; height: parent.height; verticalAlignment: Text.AlignVCenter; text: ri.name; elide: Text.ElideRight }
             Item { width: 4; height: 1 }
-            VText { visible: ex.searchMode; width: ex.colFolder; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.location; color: "#6d6d6d"; elide: Text.ElideMiddle }
-            VText { width: ex.colDate; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.modifiedText; color: "#6d6d6d"; elide: Text.ElideRight }
-            VText { width: ex.colType; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.type; color: "#6d6d6d"; elide: Text.ElideRight }
-            VText { width: ex.colSize; height: parent.height; rightPadding: 8; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; text: ri.sizeText; color: "#6d6d6d" }
+            VText { visible: ex.searchMode; width: ex.colFolder; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.location; color: Theme.c("#6d6d6d"); elide: Text.ElideMiddle }
+            VText { width: ex.colDate; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.modifiedText; color: Theme.c("#6d6d6d"); elide: Text.ElideRight }
+            VText { width: ex.colType; height: parent.height; leftPadding: 6; verticalAlignment: Text.AlignVCenter; text: ri.type; color: Theme.c("#6d6d6d"); elide: Text.ElideRight }
+            VText { width: ex.colSize; height: parent.height; rightPadding: 8; verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignRight; text: ri.sizeText; color: Theme.c("#6d6d6d") }
         }
         // Content layout
         Column {
@@ -1992,7 +1992,7 @@ FocusScope {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 3
             VText { width: parent.width; text: ri.name; font.pixelSize: Theme.fontSize + 1; elide: Text.ElideRight }
-            VText { width: parent.width; text: ex.searchMode ? ri.location : ri.type; color: "#6d6d6d"; elide: Text.ElideMiddle }
+            VText { width: parent.width; text: ex.searchMode ? ri.location : ri.type; color: Theme.c("#6d6d6d"); elide: Text.ElideMiddle }
         }
         Column {
             visible: ri.content
@@ -2000,8 +2000,8 @@ FocusScope {
             width: parent.width * 0.45 - 10
             anchors.verticalCenter: parent.verticalCenter
             spacing: 3
-            VText { width: parent.width; text: "Date modified: " + ri.modifiedText; color: "#6d6d6d"; elide: Text.ElideRight }
-            VText { visible: !ri.isDir; width: parent.width; text: "Size: " + ri.sizeText; color: "#6d6d6d" }
+            VText { width: parent.width; text: "Date modified: " + ri.modifiedText; color: Theme.c("#6d6d6d"); elide: Text.ElideRight }
+            VText { visible: !ri.isDir; width: parent.width; text: "Size: " + ri.sizeText; color: Theme.c("#6d6d6d") }
         }
         MouseArea {
             id: riMouse

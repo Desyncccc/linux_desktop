@@ -118,7 +118,7 @@ void Prefs::resetToDefaults()
     for (const QString &k : m_settings.allKeys())
         if (!keep.contains(k) && !k.startsWith(QLatin1String("usage/")) && !k.startsWith(QLatin1String("desktopIcons/")))
             m_settings.remove(k);
-    Q_EMIT themeChanged(); Q_EMIT accentColorChanged(); Q_EMIT colorIntensityChanged(); Q_EMIT transparencyChanged();
+    Q_EMIT themeChanged(); Q_EMIT accentColorChanged(); Q_EMIT colorIntensityChanged(); Q_EMIT transparencyChanged(); Q_EMIT darkModeChanged();
     Q_EMIT wallpaperChanged(); Q_EMIT animationsChanged(); Q_EMIT taskbarCenteredChanged();
     Q_EMIT smallTaskbarIconsChanged(); Q_EMIT combineButtonsChanged(); Q_EMIT clock24hChanged();
     Q_EMIT showSecondsChanged(); Q_EMIT nightLightChanged(); Q_EMIT nightLightStrengthChanged();

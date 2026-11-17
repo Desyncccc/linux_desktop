@@ -49,10 +49,10 @@ FocusScope {
         id: menuBar
         width: parent.width; height: 22
         gradient: Gradient {
-            GradientStop { position: 0; color: "#ffffff" }
-            GradientStop { position: 1; color: "#e9eef6" }
+            GradientStop { position: 0; color: Theme.c("#ffffff") }
+            GradientStop { position: 1; color: Theme.c("#e9eef6") }
         }
-        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: "#d8dde6" }
+        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.c("#d8dde6") }
         Row {
             x: 2
             height: parent.height
@@ -99,8 +99,8 @@ FocusScope {
         visible: np.askPath
         y: menuBar.height
         width: parent.width; height: visible ? 32 : 0
-        color: "#fff8d8"
-        border.color: "#e0cc80"
+        color: Theme.c("#fff8d8")
+        border.color: Theme.c("#e0cc80")
         Row {
             x: 8; anchors.verticalCenter: parent.verticalCenter
             spacing: 6
@@ -119,7 +119,7 @@ FocusScope {
         y: menuBar.height + saveBar.height
         width: parent.width
         height: parent.height - y - status.height
-        color: "white"
+        color: Theme.c("white")
         Flickable {
             id: flick
             anchors.fill: parent
@@ -143,8 +143,8 @@ FocusScope {
                 font.pixelSize: 13
                 wrapMode: np.wrap ? TextEdit.Wrap : TextEdit.NoWrap
                 selectByMouse: true
-                selectionColor: "#3399ff"
-                selectedTextColor: "white"
+                selectionColor: Theme.c("#3399ff")
+                selectedTextColor: Theme.c("white")
                 focus: true
                 onTextChanged: np.dirty = true
                 onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
@@ -158,7 +158,7 @@ FocusScope {
         anchors.bottom: parent.bottom
         width: parent.width; height: 22
         color: Theme.face
-        Rectangle { width: parent.width; height: 1; color: "#d7d7d7" }
+        Rectangle { width: parent.width; height: 1; color: Theme.c("#d7d7d7") }
         VText {
             anchors.right: parent.right; anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter

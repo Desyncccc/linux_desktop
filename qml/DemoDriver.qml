@@ -162,7 +162,10 @@ Item {
         [700, () => {}, "explorer-computer"],
         [100, () => { if (explorerWin) { explorerWin.internalItem.navigate(Files.home, true); explorerWin.internalItem.setView("tiles"); explorerWin.internalItem.menuBarPinned = true } }, ""],
         [700, () => {}, "explorer-tiles"],
-        [100, () => { if (explorerWin) { const e = explorerWin.internalItem; e.menuBarPinned = false; e.setView("details"); e.navigate(Files.home, true) } }, ""],
+        [100, () => { if (explorerWin) { const e = explorerWin.internalItem; e.menuBarPinned = false; e.setView("details"); e.navigate(Files.documents, true); e.selectIndex(0, 0) }
+                      Prefs.darkMode = true; Shell.toggleStart() }, ""],
+        [800, () => {}, "dark-mode"],
+        [100, () => { Shell.closePopups(); Prefs.darkMode = false; if (explorerWin) explorerWin.internalItem.navigate(Files.home, true) }, ""],
         [100, () => { settingsWin = screen.openInternal("settings", { page: "personalize" }) }, ""],
         [900, () => {}, "settings"],
         [100, () => { if (explorerWin) explorerWin.snap("left"); if (settingsWin) settingsWin.snap("right") }, ""],

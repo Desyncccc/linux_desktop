@@ -42,7 +42,7 @@ Flyout {
             source: Theme.icon(Sys.muted ? "volume-muted" : "volume")
             sourceSize: Qt.size(40, 40)
             layer.enabled: true
-            layer.effect: ColorOverlay { color: "#1e4f8f" }
+            layer.effect: ColorOverlay { color: Theme.c("#1e4f8f") }
         }
         onClicked: Sys.toggleMute()
     }

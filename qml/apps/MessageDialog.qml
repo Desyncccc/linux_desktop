@@ -12,7 +12,7 @@ FocusScope {
     readonly property bool missing: kind === "missing-windows" || kind === "missing-java"
     Component.onCompleted: if (frame) frame.internalTitle = missing ? Files.fileName(file) : "Vitrum"
 
-    Rectangle { anchors.fill: parent; color: "white" }
+    Rectangle { anchors.fill: parent; color: Theme.c("white") }
     Image { x: 18; y: 20; width: 32; height: 32; sourceSize: Qt.size(64, 64); source: Theme.icon(dlg.kind === "missing-java" ? "jar" : dlg.missing ? "exe" : "about") }
     VText {
         x: 64; y: 18
@@ -29,7 +29,7 @@ FocusScope {
         anchors.bottom: parent.bottom
         width: parent.width; height: 44
         color: Theme.face
-        Rectangle { width: parent.width; height: 1; color: "#dfdfdf" }
+        Rectangle { width: parent.width; height: 1; color: Theme.c("#dfdfdf") }
         Row {
             anchors.right: parent.right
             anchors.rightMargin: 12

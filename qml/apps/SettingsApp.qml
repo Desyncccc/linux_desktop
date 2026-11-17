@@ -26,15 +26,15 @@ FocusScope {
         width: 210
         height: parent.height
         gradient: Gradient {
-            GradientStop { position: 0; color: "#eef5fc" }
-            GradientStop { position: 1; color: "#d6e6f7" }
+            GradientStop { position: 0; color: Theme.c("#eef5fc") }
+            GradientStop { position: 1; color: Theme.c("#d6e6f7") }
         }
-        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: "#b6c9df" }
+        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.c("#b6c9df") }
         Column {
             x: 10; y: 14
             width: parent.width - 20
             spacing: 2
-            VText { text: "Control Panel"; font.pixelSize: Theme.fontSizeLarge; color: "#1e3287"; bottomPadding: 10; leftPadding: 4 }
+            VText { text: "Control Panel"; font.pixelSize: Theme.fontSizeLarge; color: Theme.c("#1e3287"); bottomPadding: 10; leftPadding: 4 }
             Repeater {
                 model: app.pages
                 delegate: HoverItem {
@@ -44,7 +44,7 @@ FocusScope {
                     height: 30
                     selected: app.current === modelData.id
                     AppIcon { x: 6; anchors.verticalCenter: parent.verticalCenter; size: 18; name: pageItem.modelData.icon }
-                    VText { x: 32; anchors.verticalCenter: parent.verticalCenter; text: pageItem.modelData.title; color: "#1e3287" }
+                    VText { x: 32; anchors.verticalCenter: parent.verticalCenter; text: pageItem.modelData.title; color: Theme.c("#1e3287") }
                     onClicked: app.page = modelData.id
                 }
             }
@@ -58,7 +58,7 @@ FocusScope {
         clip: true
         contentHeight: content.height + 40
         boundsBehavior: Flickable.StopAtBounds
-        Rectangle { width: parent.width; height: Math.max(parent.height, content.height + 40); color: "white" }
+        Rectangle { width: parent.width; height: Math.max(parent.height, content.height + 40); color: Theme.c("white") }
         Loader {
             id: content
             x: 26; y: 20
@@ -68,8 +68,8 @@ FocusScope {
         }
     }
 
-    component Heading: VText { font.pixelSize: Theme.fontSizeTitle; color: "#1e3287"; bottomPadding: 6 }
-    component SubHeading: VText { font.pixelSize: Theme.fontSizeLarge; color: "#1e3287"; topPadding: 14; bottomPadding: 2 }
+    component Heading: VText { font.pixelSize: Theme.fontSizeTitle; color: Theme.c("#1e3287"); bottomPadding: 6 }
+    component SubHeading: VText { font.pixelSize: Theme.fontSizeLarge; color: Theme.c("#1e3287"); topPadding: 14; bottomPadding: 2 }
     component Note: VText { color: Theme.textMuted; wrapMode: Text.Wrap; width: parent ? parent.width : 400 }
 
     Component {
@@ -95,25 +95,25 @@ FocusScope {
                             width: 150; height: 94
                             radius: 3
                             border.width: themeCard.chosen ? 3 : 1
-                            border.color: themeCard.chosen ? "#3399ff" : "#a0a0a0"
+                            border.color: themeCard.chosen ? Theme.c("#3399ff") : Theme.c("#a0a0a0")
                             clip: true
                             gradient: Gradient {
-                                GradientStop { position: 0; color: "#173f6e" }
-                                GradientStop { position: 1; color: "#3f8fd6" }
+                                GradientStop { position: 0; color: Theme.c("#173f6e") }
+                                GradientStop { position: 1; color: Theme.c("#3f8fd6") }
                             }
                             // miniature window
                             Rectangle {
                                 x: 18; y: 12; width: 112; height: 62
                                 radius: themeCard.modelData.id === "modern" ? 5 : 3
-                                border.color: themeCard.modelData.id === "modern" ? "#40000000" : "#90000000"
+                                border.color: Theme.c(themeCard.modelData.id === "modern" ? "#40000000" : "#90000000")
                                 gradient: Gradient {
-                                    GradientStop { position: 0; color: themeCard.modelData.id === "aero" ? Qt.rgba(0.62, 0.78, 0.95, 0.85) : themeCard.modelData.id === "basic" ? "#d3e1f3" : "#f3f3f3" }
-                                    GradientStop { position: 1; color: themeCard.modelData.id === "aero" ? Qt.rgba(0.35, 0.55, 0.85, 0.85) : themeCard.modelData.id === "basic" ? "#b4c9e6" : "#f3f3f3" }
+                                    GradientStop { position: 0; color: Theme.c(themeCard.modelData.id === "aero" ? Qt.rgba(0.62, 0.78, 0.95, 0.85) : themeCard.modelData.id === "basic" ? "#d3e1f3" : "#f3f3f3") }
+                                    GradientStop { position: 1; color: Theme.c(themeCard.modelData.id === "aero" ? Qt.rgba(0.35, 0.55, 0.85, 0.85) : themeCard.modelData.id === "basic" ? "#b4c9e6" : "#f3f3f3") }
                                 }
                                 Rectangle {
                                     x: themeCard.modelData.id === "modern" ? 1 : 5; y: themeCard.modelData.id === "modern" ? 16 : 18
                                     width: parent.width - 2 * x; height: parent.height - y - x
-                                    color: "white"
+                                    color: Theme.c("white")
                                     border.color: themeCard.modelData.id === "modern" ? "transparent" : "#80000000"
                                 }
                                 Rectangle {
@@ -121,7 +121,7 @@ FocusScope {
                                     y: themeCard.modelData.id === "modern" ? 1 : 0
                                     width: themeCard.modelData.id === "modern" ? 16 : 18; height: themeCard.modelData.id === "modern" ? 14 : 10
                                     radius: themeCard.modelData.id === "modern" ? 0 : 2
-                                    color: themeCard.modelData.id === "modern" ? "#c42b1c" : "#c9503c"
+                                    color: Theme.c(themeCard.modelData.id === "modern" ? "#c42b1c" : "#c9503c")
                                 }
                             }
                             Rectangle {
@@ -154,7 +154,7 @@ FocusScope {
                         Rectangle {
                             width: 112; height: 70
                             border.width: Prefs.wallpaper === modelData.id ? 3 : 1
-                            border.color: Prefs.wallpaper === modelData.id ? "#3399ff" : "#a0a0a0"
+                            border.color: Theme.c(Prefs.wallpaper === modelData.id ? "#3399ff" : "#a0a0a0")
                             ShaderEffect {
                                 anchors.fill: parent
                                 anchors.margins: parent.border.width
@@ -196,7 +196,7 @@ FocusScope {
                         width: 40; height: 40
                         radius: 4
                         border.width: Prefs.accentColor == modelData ? 3 : 1
-                        border.color: Prefs.accentColor == modelData ? "#1e3287" : "#7a7a7a"
+                        border.color: Prefs.accentColor == modelData ? Theme.c("#1e3287") : Theme.c("#7a7a7a")
                         gradient: Gradient {
                             GradientStop { position: 0; color: Qt.lighter(modelData, 1.45) }
                             GradientStop { position: 0.5; color: modelData }
@@ -208,6 +208,7 @@ FocusScope {
                 }
             }
             CheckBox7 { text: "Enable transparency"; checked: Prefs.transparency; onToggled: (c) => Prefs.transparency = c }
+            CheckBox7 { text: "Dark mode (windows, Explorer, menus and apps)"; checked: Prefs.darkMode; onToggled: (c) => Prefs.darkMode = c }
             Row {
                 spacing: 10
                 VText { text: "Color intensity:"; anchors.verticalCenter: parent.verticalCenter; width: 110 }
@@ -284,7 +285,7 @@ FocusScope {
             Note { text: "Open Windows programs (.exe), installers (.msi), batch files (.bat, .cmd), shortcuts (.lnk) and registry files (.reg) just by double-clicking them. Programs you install appear in the Start menu under “Windows Programs”." }
             Row {
                 spacing: 10
-                Rectangle { width: 12; height: 12; radius: 6; color: Compat.windowsAvailable ? "#37a33a" : "#d9442b"; anchors.verticalCenter: parent.verticalCenter }
+                Rectangle { width: 12; height: 12; radius: 6; color: Compat.windowsAvailable ? Theme.c("#37a33a") : Theme.c("#d9442b"); anchors.verticalCenter: parent.verticalCenter }
                 VText {
                     text: Compat.windowsAvailable ? "Windows app support is installed" + (Compat.runtimeVersion ? " (runtime " + Compat.runtimeVersion + ")" : "")
                                                   : "Windows app support is not installed"
@@ -307,7 +308,7 @@ FocusScope {
             SubHeading { text: "Java programs (.jar)" }
             Row {
                 spacing: 10
-                Rectangle { width: 12; height: 12; radius: 6; color: Compat.javaAvailable ? "#37a33a" : "#d9442b"; anchors.verticalCenter: parent.verticalCenter }
+                Rectangle { width: 12; height: 12; radius: 6; color: Compat.javaAvailable ? Theme.c("#37a33a") : Theme.c("#d9442b"); anchors.verticalCenter: parent.verticalCenter }
                 VText { text: Compat.javaAvailable ? "Java runtime is installed" : "Java runtime is not installed"; font.bold: true }
             }
             Button7 { visible: !Compat.javaAvailable; text: "Install Java runtime"; enabled: Compat.installCommand("java").length > 0; onClicked: Compat.installRuntime("java") }

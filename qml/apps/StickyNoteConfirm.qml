@@ -36,7 +36,7 @@ FocusScope {
         else if (e.key === Qt.Key_Return || e.key === Qt.Key_Enter) { answer(!no.activeFocus); e.accepted = true }
     }
 
-    Rectangle { anchors.fill: parent; color: "white" }
+    Rectangle { anchors.fill: parent; color: Theme.c("white") }
     Image {
         x: 16; y: 18
         width: 32; height: 32
@@ -48,14 +48,14 @@ FocusScope {
         width: parent.width - 76
         wrapMode: Text.Wrap
         text: "Are you sure you want to delete this note?"
-        color: "#003399"
+        color: Theme.c("#003399")
         font.pixelSize: Theme.fontSizeLarge - 1
     }
     Rectangle {
         anchors.bottom: parent.bottom
         width: parent.width; height: 44
         color: Theme.face
-        Rectangle { width: parent.width; height: 1; color: "#dfdfdf" }
+        Rectangle { width: parent.width; height: 1; color: Theme.c("#dfdfdf") }
         CheckBox7 {
             id: dontAsk
             x: 12

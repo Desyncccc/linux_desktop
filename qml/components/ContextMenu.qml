@@ -33,7 +33,7 @@ Item {
         glowRadius: 5
         spread: 0.1
         cornerRadius: 6
-        color: "#50000000"
+        color: Theme.c("#50000000")
     }
     Rectangle {
         id: box
@@ -41,16 +41,16 @@ Item {
         height: col.implicitHeight + 6
         x: Math.min(menu.px, menu.width - width - 2)
         y: menu.py + height > menu.height ? Math.max(0, menu.py - height) : menu.py
-        color: "#f0f0f0"
-        border.color: "#979797"
+        color: Theme.c("#f0f0f0")
+        border.color: Theme.c("#979797")
 
         Rectangle { // icon gutter
             x: 2; y: 2
             width: 26
             height: parent.height - 4
-            color: "#f1f1f1"
-            Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: "#e2e3e3" }
-            Rectangle { anchors.right: parent.right; anchors.rightMargin: -1; width: 1; height: parent.height; color: "white" }
+            color: Theme.c("#f1f1f1")
+            Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.c("#e2e3e3") }
+            Rectangle { anchors.right: parent.right; anchors.rightMargin: -1; width: 1; height: parent.height; color: Theme.c("white") }
         }
         Column {
             id: col
@@ -70,17 +70,17 @@ Item {
                         visible: entry.sep
                         x: 30; width: parent.width - 32
                         anchors.verticalCenter: parent.verticalCenter
-                        dark: "#e0e0e0"
+                        dark: Theme.c("#e0e0e0")
                     }
                     Rectangle {
                         visible: !entry.sep && entry.on && ema.containsMouse
                         anchors.fill: parent
                         anchors.margins: 1
                         radius: 3
-                        border.color: "#a8d8eb"
+                        border.color: Theme.c("#a8d8eb")
                         gradient: Gradient {
-                            GradientStop { position: 0; color: "#e8f1fb" }
-                            GradientStop { position: 1; color: "#d5e7f9" }
+                            GradientStop { position: 0; color: Theme.c("#e8f1fb") }
+                            GradientStop { position: 1; color: Theme.c("#d5e7f9") }
                         }
                     }
                     AppIcon {

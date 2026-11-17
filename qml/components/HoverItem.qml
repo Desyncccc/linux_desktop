@@ -19,10 +19,10 @@ Item {
         anchors.fill: parent
         radius: hi.radius
         visible: hi.hovered || hi.selected
-        border.color: hi.dark ? Qt.rgba(1, 1, 1, 0.55) : (hi.selected ? "#7da2ce" : "#b8d6fb")
+        border.color: hi.dark ? Qt.rgba(1, 1, 1, 0.55) : (hi.selected ? Theme.c("#7da2ce") : Theme.c("#b8d6fb"))
         gradient: Gradient {
-            GradientStop { position: 0; color: hi.dark ? Qt.rgba(1, 1, 1, 0.30) : (hi.selected ? "#dcebfc" : "#fafbfd") }
-            GradientStop { position: 1; color: hi.dark ? Qt.rgba(1, 1, 1, 0.12) : (hi.selected ? "#c1dcfc" : "#ebf3fd") }
+            GradientStop { position: 0; color: hi.dark ? Qt.rgba(1, 1, 1, 0.30) : (hi.selected ? Theme.c("#dcebfc") : Theme.c("#fafbfd")) }
+            GradientStop { position: 1; color: hi.dark ? Qt.rgba(1, 1, 1, 0.12) : (hi.selected ? Theme.c("#c1dcfc") : Theme.c("#ebf3fd")) }
         }
         Rectangle {
             anchors.fill: parent

@@ -27,12 +27,12 @@ Item {
         anchors.fill: parent
         radius: 3
         visible: !btn.flat || btn.hovered || btn.checked
-        border.color: btn.pressed || btn.checked ? "#2c628b" : btn.hovered ? "#3c7fb1" : (btn.isDefault || btn.activeFocus ? "#3399ff" : "#707070")
+        border.color: Theme.c(btn.pressed || btn.checked ? "#2c628b" : btn.hovered ? "#3c7fb1" : (btn.isDefault || btn.activeFocus ? "#3399ff" : "#707070"))
         gradient: Gradient {
-            GradientStop { position: 0.0; color: btn.pressed || btn.checked ? "#e5f4fc" : btn.hovered ? "#eaf6fd" : "#f2f2f2" }
-            GradientStop { position: 0.49; color: btn.pressed || btn.checked ? "#c4e5f6" : btn.hovered ? "#d9f0fc" : "#ebebeb" }
-            GradientStop { position: 0.5; color: btn.pressed || btn.checked ? "#98d1ef" : btn.hovered ? "#bee6fd" : "#dddddd" }
-            GradientStop { position: 1.0; color: btn.pressed || btn.checked ? "#68b3db" : btn.hovered ? "#a7d9f5" : "#cfcfcf" }
+            GradientStop { position: 0.0; color: Theme.c(btn.pressed || btn.checked ? "#e5f4fc" : btn.hovered ? "#eaf6fd" : "#f2f2f2") }
+            GradientStop { position: 0.49; color: Theme.c(btn.pressed || btn.checked ? "#c4e5f6" : btn.hovered ? "#d9f0fc" : "#ebebeb") }
+            GradientStop { position: 0.5; color: Theme.c(btn.pressed || btn.checked ? "#98d1ef" : btn.hovered ? "#bee6fd" : "#dddddd") }
+            GradientStop { position: 1.0; color: Theme.c(btn.pressed || btn.checked ? "#68b3db" : btn.hovered ? "#a7d9f5" : "#cfcfcf") }
         }
         Rectangle {
             anchors.fill: parent

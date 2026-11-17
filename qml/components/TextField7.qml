@@ -18,14 +18,14 @@ FocusScope {
     Rectangle {
         anchors.fill: parent
         radius: tf.rounded ? 3 : 0
-        color: "white"
-        border.color: input.activeFocus ? "#3d7bad" : (ma.containsMouse ? "#5794bf" : "#abadb3")
+        color: Theme.c("white")
+        border.color: Theme.c(input.activeFocus ? "#3d7bad" : (ma.containsMouse ? "#5794bf" : "#abadb3"))
         Rectangle {
             anchors.fill: parent
             anchors.margins: 1
             radius: tf.rounded ? 2 : 0
             color: "transparent"
-            border.color: input.activeFocus ? "#a4c9e3" : "transparent"
+            border.color: input.activeFocus ? Theme.c("#a4c9e3") : "transparent"
         }
     }
     TextInput {
@@ -37,8 +37,8 @@ FocusScope {
         font.family: Theme.font
         font.pixelSize: Theme.fontSize
         color: Theme.text
-        selectionColor: "#3399ff"
-        selectedTextColor: "white"
+        selectionColor: Theme.c("#3399ff")
+        selectedTextColor: Theme.c("white")
         clip: true
         focus: true
         selectByMouse: true
@@ -49,7 +49,7 @@ FocusScope {
         verticalAlignment: Text.AlignVCenter
         text: tf.placeholder
         font.italic: tf.italicPlaceholder
-        color: "#7a7a7a"
+        color: Theme.c("#7a7a7a")
         visible: input.text.length === 0
     }
     AppIcon {

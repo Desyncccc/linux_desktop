@@ -14,8 +14,8 @@ FocusScope {
         x: 8; y: 8
         width: parent.width - 16
         height: parent.height - 60
-        color: "white"
-        border.color: "#898c95"
+        color: Theme.c("white")
+        border.color: Theme.c("#898c95")
         Column {
             x: 14; y: 14
             width: parent.width - 28

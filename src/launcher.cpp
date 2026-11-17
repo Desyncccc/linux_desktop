@@ -2,6 +2,7 @@
 #include "launcher.h"
 #include "appmodel.h"
 #include "compat.h"
+#include "prefs.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -60,6 +61,9 @@ QProcessEnvironment Launcher::clientEnvironment() const
     env.insert(QStringLiteral("GDK_BACKEND"), QStringLiteral("wayland,x11"));
     env.insert(QStringLiteral("SDL_VIDEODRIVER"), QStringLiteral("wayland,x11"));
     env.insert(QStringLiteral("CLUTTER_BACKEND"), QStringLiteral("wayland"));
+    // Dark mode: ask toolkit apps (GTK, so also Firefox) to follow it.
+    if (Prefs::instance()->darkMode() && !env.contains(QStringLiteral("GTK_THEME")))
+        env.insert(QStringLiteral("GTK_THEME"), QStringLiteral("Adwaita:dark"));
     env.insert(QStringLiteral("MOZ_ENABLE_WAYLAND"), QStringLiteral("1"));
     env.insert(QStringLiteral("ELECTRON_OZONE_PLATFORM_HINT"), QStringLiteral("wayland"));
     env.insert(QStringLiteral("_JAVA_AWT_WM_NONREPARENTING"), QStringLiteral("1"));

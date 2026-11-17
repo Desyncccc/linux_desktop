@@ -15,17 +15,17 @@ Item {
         id: box
         width: 13; height: 13
         anchors.verticalCenter: parent.verticalCenter
-        border.color: ma.containsMouse ? "#3c7fb1" : "#8e8f8f"
+        border.color: ma.containsMouse ? Theme.c("#3c7fb1") : Theme.c("#8e8f8f")
         gradient: Gradient {
-            GradientStop { position: 0; color: ma.containsMouse ? "#def9fa" : "#ebebeb" }
-            GradientStop { position: 1; color: ma.containsMouse ? "#79c6f9" : "#ffffff" }
+            GradientStop { position: 0; color: ma.containsMouse ? Theme.c("#def9fa") : Theme.c("#ebebeb") }
+            GradientStop { position: 1; color: ma.containsMouse ? Theme.c("#79c6f9") : Theme.c("#ffffff") }
         }
         VText {
             anchors.centerIn: parent
             visible: cb.checked
             text: "✔"
             font.pixelSize: 11
-            color: "#4a5f97"
+            color: Theme.c("#4a5f97")
         }
     }
     VText {

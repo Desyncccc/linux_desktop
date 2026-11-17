@@ -10,6 +10,32 @@ QtObject {
     readonly property bool isAero: style === "aero"
     readonly property bool isModern: style === "modern"
     readonly property bool isBasic: style === "basic"
+    // Dark mode (Control Panel > Personalization)
+    readonly property bool dark: Prefs.darkMode
+
+    // Maps a colour designed for the light look to its dark-mode equivalent.
+    // Whites, greys and pale tints flip to dark tones of the same hue (a pale
+    // blue selection becomes deep navy); strong accent colours stay as they
+    // are. In light mode colours pass through unchanged.
+    function c(col) {
+        if (!dark)
+            return col
+        const q = Qt.color(col)
+        const h = q.hslHue, sat = q.hslSaturation, l = q.hslLightness, a = q.a
+        if (sat > 0.45 && l > 0.25 && l < 0.72) {
+            // Deep accent colours (headings, links) need lifting to stay
+            // readable on dark backgrounds; brighter accents stay.
+            if (l < 0.45)
+                return Qt.hsla(h < 0 ? 0 : h, Math.min(1, sat), 0.66, a)
+            return q
+        }
+        let nl = 0.10 + (1 - l) * 0.78
+        // Keep text readable: near-black text becomes near-white.
+        if (l < 0.3)
+            nl = 0.93 - l * 0.6
+        const ns = l > 0.75 ? Math.min(sat, 0.55) : sat
+        return Qt.hsla(h < 0 ? 0 : h, ns, Math.max(0, Math.min(1, nl)), a)
+    }
 
     readonly property color accent: Prefs.accentColor
     readonly property bool transparency: Prefs.transparency
@@ -29,8 +55,8 @@ QtObject {
     readonly property int frameRadius: isModern ? 8 : 6
     readonly property int captionHeight: isModern ? 32 : 19
     readonly property bool titleGlow: isAero && transparency
-    readonly property color titleText: isModern ? "#1a1a1a" : "#000000"
-    readonly property color titleTextInactive: isModern ? "#8a8a8a" : "#444444"
+    readonly property color titleText: isModern ? (dark ? "#f0f0f0" : "#1a1a1a") : (dark && isBasic ? "#f0f0f0" : "#000000")
+    readonly property color titleTextInactive: isModern ? "#8a8a8a" : (dark && isBasic ? "#a0a0a0" : "#444444")
 
     // Taskbar
     readonly property int taskbarHeight: Prefs.smallTaskbarIcons ? 30 : (isModern ? 46 : 40)
@@ -38,18 +64,18 @@ QtObject {
     readonly property int taskButtonWidth: Prefs.smallTaskbarIcons ? 40 : 56
 
     // Neutral palette
-    readonly property color text: "#1e1e1e"
-    readonly property color textMuted: "#5a5a5a"
-    readonly property color textDisabled: "#9a9a9a"
+    readonly property color text: dark ? "#ececec" : "#1e1e1e"
+    readonly property color textMuted: dark ? "#a6a6a6" : "#5a5a5a"
+    readonly property color textDisabled: dark ? "#6a6a6a" : "#9a9a9a"
     readonly property color textOnGlass: "#ffffff"
-    readonly property color window: "#ffffff"
-    readonly property color face: "#f0f0f0"
-    readonly property color faceBorder: "#a0a0a0"
-    readonly property color link: "#0066cc"
-    readonly property color hoverFill: "#e5f3fb"
-    readonly property color hoverBorder: "#70c0e7"
-    readonly property color selectFill: "#cce8ff"
-    readonly property color selectBorder: "#99d1ff"
+    readonly property color window: dark ? "#1e1f22" : "#ffffff"
+    readonly property color face: dark ? "#2b2d31" : "#f0f0f0"
+    readonly property color faceBorder: dark ? "#4a4d52" : "#a0a0a0"
+    readonly property color link: dark ? "#5fb0ff" : "#0066cc"
+    readonly property color hoverFill: dark ? "#203a52" : "#e5f3fb"
+    readonly property color hoverBorder: dark ? "#2f6e9a" : "#70c0e7"
+    readonly property color selectFill: dark ? "#1c4a73" : "#cce8ff"
+    readonly property color selectBorder: dark ? "#2f6e9a" : "#99d1ff"
     readonly property color focusBorder: "#3399ff"
     readonly property color danger: "#c42b1c"
 
@@ -65,8 +91,11 @@ QtObject {
 
     // Modern: light mica windows, dark acrylic panels
     function modernTint(role, active) {
-        if (role === "window")
+        if (role === "window") {
+            if (dark)
+                return active ? Qt.tint("#202124", Qt.rgba(accent.r, accent.g, accent.b, 0.10)) : "#2a2b2e"
             return active ? Qt.tint("#f3f3f3", Qt.rgba(accent.r, accent.g, accent.b, 0.06)) : "#f7f7f7"
+        }
         return "#1f1f1f"
     }
     function modernIntensity(role) {
@@ -77,12 +106,12 @@ QtObject {
     // Basic: opaque light-blue window faces; panels in a solid accent shade
     function basicTop(role, active) {
         if (role === "window")
-            return active ? "#d3e1f3" : "#e6ecf3"
+            return dark ? (active ? "#3a4656" : "#30363e") : (active ? "#d3e1f3" : "#e6ecf3")
         return Qt.darker(accent, 1.15)
     }
     function basicBottom(role, active) {
         if (role === "window")
-            return active ? "#b4c9e6" : "#d5dde8"
+            return dark ? (active ? "#2a3440" : "#262b31") : (active ? "#b4c9e6" : "#d5dde8")
         return Qt.darker(accent, 1.7)
     }
 

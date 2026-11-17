@@ -42,8 +42,8 @@ Item {
         anchors.margins: 1
         radius: 5
         gradient: Gradient {
-            GradientStop { position: 0; color: Qt.rgba(1, 1, 1, 0.96) }
-            GradientStop { position: 1; color: Qt.rgba(0.94, 0.96, 0.98, 0.96) }
+            GradientStop { position: 0; color: Theme.dark ? Qt.rgba(0.15, 0.16, 0.17, 0.97) : Qt.rgba(1, 1, 1, 0.96) }
+            GradientStop { position: 1; color: Theme.dark ? Qt.rgba(0.11, 0.12, 0.13, 0.97) : Qt.rgba(0.94, 0.96, 0.98, 0.96) }
         }
     }
     Item {

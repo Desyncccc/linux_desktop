@@ -25,14 +25,14 @@ Item {
         width: s.vertical ? 4 : s.width - 12
         height: s.vertical ? s.height - 12 : 4
         radius: 2
-        color: s.light ? Qt.rgba(1, 1, 1, 0.35) : "#e7eaea"
-        border.color: s.light ? Qt.rgba(0, 0, 0, 0.35) : "#b0b0b0"
+        color: s.light ? Qt.rgba(1, 1, 1, 0.35) : Theme.c("#e7eaea")
+        border.color: s.light ? Qt.rgba(0, 0, 0, 0.35) : Theme.c("#b0b0b0")
         Rectangle {
             visible: !s.vertical
             width: parent.width * s.ratio
             height: parent.height
             radius: 2
-            color: s.light ? "#9fd0ff" : "#4a9de0"
+            color: s.light ? Theme.c("#9fd0ff") : Theme.c("#4a9de0")
         }
         Rectangle {
             visible: s.vertical
@@ -40,7 +40,7 @@ Item {
             width: parent.width
             height: parent.height * s.ratio
             radius: 2
-            color: s.light ? "#9fd0ff" : "#4a9de0"
+            color: s.light ? Theme.c("#9fd0ff") : Theme.c("#4a9de0")
         }
     }
     Rectangle {
@@ -50,10 +50,10 @@ Item {
         radius: 2
         x: s.vertical ? (s.width - width) / 2 : 6 + s.ratio * s.span - width / 2
         y: s.vertical ? 6 + (1 - s.ratio) * s.span - height / 2 : (s.height - height) / 2
-        border.color: ma.pressed ? "#2c628b" : ma.containsMouse ? "#3c7fb1" : "#707070"
+        border.color: Theme.c(ma.pressed ? "#2c628b" : ma.containsMouse ? "#3c7fb1" : "#707070")
         gradient: Gradient {
-            GradientStop { position: 0; color: ma.containsMouse ? "#eaf6fd" : "#f2f2f2" }
-            GradientStop { position: 1; color: ma.containsMouse ? "#a7d9f5" : "#cfcfcf" }
+            GradientStop { position: 0; color: ma.containsMouse ? Theme.c("#eaf6fd") : Theme.c("#f2f2f2") }
+            GradientStop { position: 1; color: ma.containsMouse ? Theme.c("#a7d9f5") : Theme.c("#cfcfcf") }
         }
     }
     MouseArea {

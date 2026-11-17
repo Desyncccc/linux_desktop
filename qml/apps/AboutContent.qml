@@ -9,7 +9,7 @@ Column {
         Image { source: Theme.icon("vitrum"); width: 72; height: 72; sourceSize: Qt.size(144, 144) }
         Column {
             anchors.verticalCenter: parent.verticalCenter
-            VText { text: "Vitrum"; font.pixelSize: 30; color: "#1e3287" }
+            VText { text: "Vitrum"; font.pixelSize: 30; color: Theme.c("#1e3287") }
             VText { text: "Version " + Session.version; color: Theme.textMuted }
         }
     }

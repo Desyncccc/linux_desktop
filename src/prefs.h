@@ -33,6 +33,7 @@ private:
     VITRUM_PREF(QColor, accentColor, setAccentColor, "appearance/accentColor", QColor(QStringLiteral("#3a7bd5")))
     VITRUM_PREF(qreal, colorIntensity, setColorIntensity, "appearance/colorIntensity", 0.45)
     VITRUM_PREF(bool, transparency, setTransparency, "appearance/transparency", true)
+    VITRUM_PREF(bool, darkMode, setDarkMode, "appearance/darkMode", false)
     VITRUM_PREF(QString, wallpaper, setWallpaper, "appearance/wallpaper", QStringLiteral("builtin:aurora"))
     VITRUM_PREF(QString, iconTheme, setIconTheme, "appearance/iconTheme", QString())
     VITRUM_PREF(bool, animations, setAnimations, "appearance/animations", true)

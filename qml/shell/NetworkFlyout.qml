@@ -20,8 +20,8 @@ Flyout {
             Rectangle {
                 width: 32; height: 32; radius: 4
                 gradient: Gradient {
-                    GradientStop { position: 0; color: "#6fb5f2" }
-                    GradientStop { position: 1; color: "#2a6fc0" }
+                    GradientStop { position: 0; color: Theme.c("#6fb5f2") }
+                    GradientStop { position: 1; color: Theme.c("#2a6fc0") }
                 }
                 Image {
                     anchors.centerIn: parent
