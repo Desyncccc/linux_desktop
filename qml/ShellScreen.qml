@@ -85,6 +85,9 @@ Item {
     Component { id: notepadApp; NotepadApp {} }
     Component { id: photosApp; PhotoViewerApp {} }
     Component { id: messageApp; MessageDialog {} }
+    Component { id: calculatorApp; CalculatorApp {} }
+    Component { id: stickyNotesApp; StickyNotesApp {} }
+    Component { id: stickyConfirmApp; StickyNoteConfirm {} }
 
     readonly property var internalSpecs: ({
         settings:    { component: settingsApp, title: "Settings", icon: Theme.icon("settings"), w: 860, h: 580, single: true },
@@ -95,7 +98,10 @@ Item {
         properties:  { component: propertiesApp, title: "Properties", icon: Theme.icon("properties"), w: 380, h: 470, resizable: false },
         notepad:     { component: notepadApp, title: "Untitled - Notepad", icon: "accessories-text-editor", w: 720, h: 500 },
         photos:      { component: photosApp, title: "Photo Viewer", icon: Theme.icon("image-file"), w: 820, h: 600 },
-        message:     { component: messageApp, title: "Vitrum", icon: Theme.icon("about"), w: 420, h: 170, resizable: false }
+        message:     { component: messageApp, title: "Vitrum", icon: Theme.icon("about"), w: 420, h: 170, resizable: false },
+        calculator:  { component: calculatorApp, title: "Calculator", icon: Theme.icon("calculator"), w: 212, h: 288, resizable: false },
+        stickynotes: { component: stickyNotesApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 200, h: 200, resizable: false, frameless: true },
+        stickyconfirm: { component: stickyConfirmApp, title: "Sticky Notes", icon: Theme.icon("stickynotes"), w: 380, h: 124, resizable: false }
     })
 
     function createClientWindow(xdgSurface) {
@@ -128,6 +134,7 @@ Item {
             internalHeight: props.height || spec.h,
             internalResizable: spec.resizable !== false,
             internalMaximizable: spec.resizable !== false,
+            internalFrameless: spec.frameless === true,
             internalProps: props,
             uid: "i" + (nextUid++)
         })

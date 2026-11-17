@@ -28,6 +28,7 @@ Item {
     property real internalMinWidth: 220
     property real internalMinHeight: 120
     property bool internalMaximized: false
+    property bool internalFrameless: false   // the app draws its own chrome (e.g. Sticky Notes)
     property alias internalItem: internalLoader.item
     property string uid: ""
 
@@ -50,7 +51,7 @@ Item {
     readonly property bool maximized: isInternal ? internalMaximized : (toplevel ? toplevel.maximized : false)
     readonly property bool fullscreen: toplevel ? toplevel.fullscreen : false
     readonly property bool active: Shell.activeWindow === win
-    readonly property bool decorated: isInternal || (toplevel !== null && toplevel.decorationMode === Xdg.XdgToplevel.ServerSideDecoration)
+    readonly property bool decorated: (isInternal && !internalFrameless) || (toplevel !== null && toplevel.decorationMode === Xdg.XdgToplevel.ServerSideDecoration)
                                       || (ServerDecorations.revision >= 0 && surface !== null && ServerDecorations.isServerDecorated(surface))
     readonly property bool framed: decorated && !fullscreen
     readonly property bool resizable: isInternal ? internalResizable
@@ -358,7 +359,7 @@ Item {
         Behavior on opacity { NumberAnimation { duration: Theme.anim(180) } }
 
         RectangularGlow {
-            visible: win.framed && !win.maximized
+            visible: (win.framed || win.internalFrameless) && !win.maximized
             x: 2; y: 5
             width: parent.width - 4
             height: parent.height - 4

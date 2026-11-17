@@ -13,6 +13,46 @@ Item {
     property int shotNo: 1
     property var explorerWin: null
     property var settingsWin: null
+    property var calcWin: null
+
+    // Calculator: engine self-test plus the keyboard character map.
+    function checkCalculator() {
+        const calc = calcWin.internalItem
+        const r = calc.engine.selfTest()
+        for (const f of r.failures)
+            console.warn("demo: calculator check failed:", f)
+        calc.engine.press("c")
+        const keys = "12+3*2=", want = "30"
+        for (let i = 0; i < keys.length; i++)
+            calc.press(calc.charCommand(keys.charAt(i)))
+        if (calc.engine.display !== want)
+            console.warn("demo: calculator keys", keys, "gave", calc.engine.display, "expected", want)
+        calc.engine.run("[c]1234.5")
+        calc.copy()
+        calc.engine.run("[c]")
+        calc.paste()
+        if (calc.engine.display !== "1234.5")
+            console.warn("demo: calculator copy/paste gave", calc.engine.display)
+        console.info("demo: calculator self-test", r.total - r.failures.length, "/", r.total, "passed")
+    }
+    function stickyWindows() {
+        return Shell.windows.filter(w => w.internalKind === "stickynotes" && !w.closing)
+    }
+    // Every saved note must come back as its own window with its text and colour.
+    function checkStickyRestore() {
+        const wins = stickyWindows()
+        const store = wins.length ? wins[0].internalItem.readStore() : { notes: [] }
+        let ok = wins.length === store.notes.length && wins.length >= 2
+        for (const n of store.notes) {
+            const w = wins.find(x => x.internalItem.noteId === n.id)
+            if (!w || w.internalItem.text !== n.text || w.internalItem.noteColor !== n.color)
+                ok = false
+        }
+        if (!ok)
+            console.warn("demo: sticky notes not restored:", wins.length, "windows for", store.notes.length, "saved notes")
+        else
+            console.info("demo: sticky notes restored", wins.length, "notes")
+    }
 
     function shot(name) {
         const n = (shotNo < 10 ? "0" : "") + shotNo
@@ -54,6 +94,35 @@ Item {
         [700, () => {}, "notepad"],
         [100, () => { screen.openInternal("message", { kind: "missing-windows", file: Files.downloads + "/setup.exe" }) }, ""],
         [700, () => {}, "exe-prompt"],
+        [100, () => { calcWin = screen.openInternal("calculator", {}); calcWin.x = 380; calcWin.y = 120 }, ""],
+        [600, () => { checkCalculator(); calcWin.internalItem.engine.run("[c]42[ms][c]125+75*3") }, "calculator"],
+        [100, () => { calcWin.internalItem.mode = "scientific"; calcWin.internalItem.engine.run("2*(3+4") }, ""],
+        [600, () => {}, "calculator-scientific"],
+        [100, () => { const c = calcWin.internalItem; c.mode = "standard"; c.showHistory = true
+                      c.engine.run("0.1+0.2=1/3*3=50+10%=7[sqrt]") }, ""],
+        [600, () => {}, "calculator-history"],
+        [100, () => { calcWin.internalItem.showHistory = false; calcWin.close(); screen.openInternal("stickynotes", {}) }, ""],
+        [600, () => { const n = stickyWindows()[0]; n.x = 820; n.y = 70; n.internalWidth = 230; n.internalHeight = 210
+                      n.internalItem.text = "Call the garage about the brakes\n\nBuy milk, bread, coffee"; n.internalItem.newNote() }, ""],
+        [600, () => { const n = stickyWindows()[1]; n.x = 1080; n.y = 150
+                      n.internalItem.text = "Team lunch Friday 12:30"; n.internalItem.setColor("blue") }, ""],
+        [500, () => {}, "sticky-notes"],
+        [100, () => { stickyWindows()[1].internalItem.showMenu(1140, 260) }, ""],
+        [500, () => {}, "sticky-notes-menu"],
+        [100, () => { Shell.closePopups(); stickyWindows()[1].internalItem.askDelete() }, ""],
+        [600, () => {}, "sticky-notes-delete"],
+        [100, () => { Shell.windows.filter(w => w.internalKind === "stickyconfirm").forEach(w => w.internalItem.answer(false))
+                      stickyWindows().forEach(w => w.close()) }, ""],
+        [700, () => { screen.openInternal("stickynotes", {}) }, ""],
+        [900, () => { checkStickyRestore(); screen.openInternal("stickynotes", {}) }, "sticky-notes-restored"],
+        [600, () => { // opening it again while running adds no window; deleting removes the saved note
+            const wins = stickyWindows()
+            if (wins.length !== 2)
+                console.warn("demo: sticky notes relaunch left", wins.length, "windows")
+            wins[1].internalItem.deleteNote()
+            if (wins[0].internalItem.readStore().notes.length !== 1)
+                console.warn("demo: sticky note was not deleted from the store")
+            wins[0].close() }, ""],
         [100, () => { Shell.activateNext(); if (settingsWin) { Shell.activate(settingsWin); settingsWin.internalItem.page = "personalize" } Prefs.theme = "modern"; Prefs.taskbarCentered = true }, ""],
         [900, () => {}, "theme-modern"],
         [100, () => { Prefs.theme = "basic"; Prefs.taskbarCentered = false }, ""],
