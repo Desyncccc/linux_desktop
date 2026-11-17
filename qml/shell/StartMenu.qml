@@ -140,7 +140,7 @@ Item {
             clip: true
             boundsBehavior: Flickable.StopAtBounds
             property var expanded: ({})
-            model: { Apps.count; return menu.open && Shell.startAllPrograms ? [{ category: "Accessories (built-in)", apps: menu.builtins }].concat(Apps.categoryGroups()) : [] }
+            model: { Apps.count; return menu.open && Shell.startAllPrograms ? Apps.categoryGroups() : [] }
             delegate: Column {
                 id: grp
                 required property var modelData

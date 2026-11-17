@@ -56,6 +56,7 @@ qt_add_qml_module(vitrumbackend
         src/keyfilter.cpp src/keyfilter.h
         src/launcher.cpp src/launcher.h
         src/notifications.cpp src/notifications.h
+        src/popupgrab.cpp src/popupgrab.h
         src/prefs.cpp src/prefs.h
         src/serverdecoration.cpp src/serverdecoration.h
         src/session.cpp src/session.h

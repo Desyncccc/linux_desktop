@@ -42,7 +42,13 @@ WL.WaylandCompositor {
                     y: tracker.mouseY
                     z: 100000
                     seat: comp.defaultSeat
-                    visible: Shell.pointerOnClient && tracker.containsMouse && surface !== null
+                    // The tracker's containsMouse stays false over client
+                    // surfaces (they take the hover events), so don't gate on
+                    // it. Only replace the shell's arrow once the client has
+                    // actually given us a cursor image: never leave the user
+                    // without a pointer.
+                    visible: Shell.pointerOnClient && surface !== null && surface.hasContent
+                    onVisibleChanged: Session.setClientCursor(visible)
                 }
             }
         }
@@ -50,11 +56,16 @@ WL.WaylandCompositor {
 
     Xdg.XdgShell {
         onToplevelCreated: (toplevel, xdgSurface) => shellScreen.createClientWindow(xdgSurface)
+        onPopupCreated: (popup, xdgSurface) => PopupGrab.track(popup)
     }
     Xdg.XdgDecorationManagerV1 {
         preferredMode: Xdg.XdgToplevel.ServerSideDecoration
     }
 
+    Connections {
+        target: PopupGrab
+        function onKeyboardFocusLost() { Shell.restoreFocus() }
+    }
     Connections {
         target: comp.defaultSeat
         function onKeyboardFocusChanged(newFocus, oldFocus) {
@@ -68,6 +79,7 @@ WL.WaylandCompositor {
     }
 
     Component.onCompleted: {
+        PopupGrab.seat = comp.defaultSeat
         const layout = Prefs.keyboardLayout.length > 0 ? Prefs.keyboardLayout : Session.env("XKB_DEFAULT_LAYOUT")
         if (layout.length > 0 && comp.defaultSeat)
             comp.defaultSeat.keymap.layout = layout

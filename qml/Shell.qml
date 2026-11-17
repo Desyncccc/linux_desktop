@@ -106,7 +106,6 @@ QtObject {
     signal focusShell()
     signal screenshotRequested()
     property bool pointerOnClient: false
-    onPointerOnClientChanged: Session.setClientCursor(pointerOnClient)
 
     function closePopups() {
         startOpen = false
