@@ -14,6 +14,7 @@
 #include <QCommandLineParser>
 #include <QQmlExtensionPlugin>
 #include <QGuiApplication>
+#include <QTimer>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQuickWindow>
@@ -92,7 +93,9 @@ int main(int argc, char *argv[])
     if (!Session::instance()->demo()) {
         Session::instance()->importEnvironment();
         Launcher::instance()->runAutostart();
-        Compat::instance()->prepare();
+        // Set up Windows program support once the desktop has settled, so it
+        // doesn't slow down the first minute (or compete with the first apps).
+        QTimer::singleShot(90000, Compat::instance(), &Compat::prepare);
     }
     return app.exec();
 }

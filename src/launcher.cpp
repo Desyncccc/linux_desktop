@@ -61,6 +61,10 @@ QProcessEnvironment Launcher::clientEnvironment() const
     env.insert(QStringLiteral("GDK_BACKEND"), QStringLiteral("wayland,x11"));
     env.insert(QStringLiteral("SDL_VIDEODRIVER"), QStringLiteral("wayland,x11"));
     env.insert(QStringLiteral("CLUTTER_BACKEND"), QStringLiteral("wayland"));
+    // Firefox: use the profile listed as default (one is prepared for new
+    // accounts) instead of creating a per-installation profile on first run.
+    if (!env.contains(QStringLiteral("MOZ_LEGACY_PROFILES")))
+        env.insert(QStringLiteral("MOZ_LEGACY_PROFILES"), QStringLiteral("1"));
     // Dark mode: ask toolkit apps (GTK, so also Firefox) to follow it.
     if (Prefs::instance()->darkMode() && !env.contains(QStringLiteral("GTK_THEME")))
         env.insert(QStringLiteral("GTK_THEME"), QStringLiteral("Adwaita:dark"));

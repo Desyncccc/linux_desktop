@@ -340,8 +340,20 @@ QtObject {
             notify("Can't open this file", Files.fileName(path), "dialog-error")
     }
 
+    // Programs being started: a second click while one is still starting
+    // (slow virtual machines) would start a second copy. Browsers in
+    // particular then fail on their half-created profile.
+    property var launching: ({})
     function launchApp(desktopId) {
         closePopups()
+        const now = Date.now()
+        const started = launching[desktopId] || 0
+        const internalApp = desktopId.indexOf("vitrum-builtin-") === 0
+        if (!internalApp && now - started < 8000 && windowsForGroup(desktopId).length === 0)
+            return
+        const l = Object.assign({}, launching)
+        l[desktopId] = now
+        launching = l
         if (Apps.launch(desktopId))
             Prefs.recordLaunch(desktopId)
         else
