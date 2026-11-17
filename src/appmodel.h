@@ -51,6 +51,7 @@ public:
     // .desktop). Returns its desktop id, or "" if the file isn't a program.
     Q_INVOKABLE QString ensureEntryForFile(const QString &path);
     Q_INVOKABLE bool isProgramFile(const QString &path) const;
+    Q_INVOKABLE QString idForInternal(const QString &kind) const { return QStringLiteral("vitrum-builtin-") + kind + QStringLiteral(".desktop"); }
 
     const DesktopEntry *entry(const QString &desktopId) const;
     static QStringList applicationDirs();
@@ -62,6 +63,8 @@ public:
 Q_SIGNALS:
     void countChanged();
     void launched(const QString &desktopId);
+    // A built-in shell program (X-Vitrum-Internal) was launched.
+    void internalRequested(const QString &kind, const QString &file);
 
 private:
     QVariantMap toMap(const DesktopEntry &e) const;

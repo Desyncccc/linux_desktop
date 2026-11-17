@@ -75,6 +75,8 @@ QString AppModel::mainCategory(const QStringList &cats)
         {QStringLiteral("Science"), QStringLiteral("Education")},
         {QStringLiteral("X-Windows"), QStringLiteral("Windows Programs")},
         {QStringLiteral("Utility"), QStringLiteral("Accessories")},
+        {QStringLiteral("X-Vitrum-Accessories"), QStringLiteral("Accessories")},
+        {QStringLiteral("X-Vitrum-System-Tools"), QStringLiteral("System Tools")},
     };
     for (const auto &p : map)
         if (cats.contains(p.first))
@@ -124,6 +126,30 @@ void AppModel::reload()
             + QStringLiteral(".desktop");
         QByteArray data = "[Desktop Entry]\nType=Application\nName=" + name.toUtf8()
             + "\nIcon=:/qt/qml/Vitrum/icons/exe.svg\nExec=vitrum-open\nCategories=X-Windows;\nX-Vitrum-Target=" + lnk.toUtf8() + "\n";
+        entries << DesktopEntry::fromData(data, id);
+    }
+
+    // Programs built into the shell itself. Launching one opens it in-process.
+    struct Builtin { const char *kind, *name, *icon, *category, *keywords; };
+    static const Builtin builtins[] = {
+        {"explorer", "Windows Explorer", "folder", "Accessories", "files;folders;explorer;browse;"},
+        {"notepad", "Notepad", "notepad", "Accessories", "text;editor;notes;"},
+        {"calculator", "Calculator", "calculator", "Accessories", "calc;math;numbers;"},
+        {"paint", "Paint", "paint", "Accessories", "draw;image;picture;brush;"},
+        {"stickynotes", "Sticky Notes", "stickynotes", "Accessories", "notes;memo;reminder;"},
+        {"snippingtool", "Snipping Tool", "snippingtool", "Accessories", "screenshot;capture;snip;"},
+        {"photos", "Photo Viewer", "image-file", "Accessories", "pictures;images;photos;"},
+        {"taskmanager", "Task Manager", "taskmanager", "System Tools", "processes;performance;kill;"},
+        {"run", "Run", "run", "System Tools", "command;execute;"},
+        {"settings", "Control Panel", "settings", "System Tools", "settings;control;preferences;"},
+    };
+    for (const Builtin &b : builtins) {
+        const QString id = QStringLiteral("vitrum-builtin-%1.desktop").arg(QLatin1String(b.kind));
+        if (seen.contains(id))
+            continue;
+        const QByteArray data = QByteArray("[Desktop Entry]\nType=Application\nName=") + b.name
+            + "\nIcon=:/qt/qml/Vitrum/icons/" + b.icon + ".svg\nExec=true\nCategories=X-Vitrum-" + QByteArray(b.category).replace(' ', '-')
+            + ";\nKeywords=" + b.keywords + "\nX-Vitrum-Internal=" + b.kind + "\n";
         entries << DesktopEntry::fromData(data, id);
     }
 
@@ -320,6 +346,12 @@ bool AppModel::launch(const QString &desktopId, const QStringList &files)
     const DesktopEntry *e = entry(desktopId);
     if (!e)
         return false;
+    const QString internal = e->value(QStringLiteral("X-Vitrum-Internal"));
+    if (!internal.isEmpty()) {
+        Q_EMIT internalRequested(internal, files.isEmpty() ? QString() : files.first());
+        Q_EMIT launched(desktopId);
+        return true;
+    }
     const QString target = e->value(QStringLiteral("X-Vitrum-Target"));
     if (!target.isEmpty()) {
         const bool ok = Launcher::instance()->openFile(target).isEmpty();

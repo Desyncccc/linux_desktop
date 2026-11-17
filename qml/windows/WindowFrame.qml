@@ -33,12 +33,12 @@ Item {
 
     // ---- metadata
     readonly property string appId: toplevel ? toplevel.appId : ""
-    readonly property string desktopId: { Apps.count; return isInternal ? "" : Apps.idForAppId(appId) }
+    readonly property string desktopId: { Apps.count; return isInternal ? Apps.idForInternal(internalKind) : Apps.idForAppId(appId) }
     readonly property var appInfo: desktopId !== "" ? Apps.get(desktopId) : ({})
     readonly property string appName: isInternal ? internalTitle : (appInfo.name || appId || "Application")
     readonly property string title: isInternal ? internalTitle : (toplevel && toplevel.title ? toplevel.title : appName)
     readonly property string iconSource: isInternal ? internalIcon : Theme.themeIcon(appInfo.iconName || appId, "application-x-executable")
-    readonly property string groupKey: isInternal ? "internal:" + internalKind
+    readonly property string groupKey: isInternal ? desktopId
                                        : (desktopId !== "" ? desktopId : (appId !== "" ? "app:" + appId : "win:" + uid))
 
     // ---- state
